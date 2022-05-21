@@ -1,0 +1,48 @@
+#!/bin/bash
+if [ $# -ne 1 ]; then
+    printf "Usage: %s PACKAGE_NAME\n" $0
+    exit 1
+fi
+export APP_HOME=$(pwd -P)
+export PACKAGE_NAME=$1
+export APP_NAME=$(basename $APP_HOME)
+export X_OS_TYPE=$(uname)
+GOPATH=${GOPATH#:}
+
+echo '[1] initializing project'
+KATE_DIR=$GOPATH/src/github.com/stn81/kate
+SKEL_DIR=$KATE_DIR/skel
+
+if [ -z $SKEL_DIR ]; then
+    echo "skel dir not found"
+    exit 1
+fi
+
+cp -Rf $SKEL_DIR/* ./
+cp -f $SKEL_DIR/.gitignore ./
+
+function do_inflate() {
+    f=$1
+    #echo "inflating ... $f"
+    if [ $X_OS_TYPE = 'Darwin' ];then
+        sed -i '' -e "s:__APP_NAME__:$APP_NAME:g" $f
+        sed -i '' -e "s:__PACKAGE_NAME__:$PACKAGE_NAME:g" $f
+    else
+        sed -i -e "s:__APP_NAME__:$APP_NAME:g" $f
+        sed -i -e "s:__PACKAGE_NAME__:$PACKAGE_NAME:g" $f
+    fi
+}
+
+export -f do_inflate
+find . -type f -print |grep -v .git|xargs -n 1 -P 10 -I {} bash -c 'do_inflate "$@"' _ {}
+
+mv "${APP_HOME}/app/__APP_NAME__/" "${APP_HOME}/app/${APP_NAME}/"
+
+echo '[2] go mod init'
+go mod init ${PACKAGE_NAME}
+echo '[3] update kate'
+go get -u github.com/stn81/kate/v2@latest
+echo '[4] go mod vendor'
+go mod vendor
+
+echo '[5] done.'
