@@ -8,12 +8,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/cloudflare/tableflip"
+	"github.com/spf13/cobra"
 	"github.com/stn81/kate/app"
 	"github.com/stn81/kate/log"
 	"github.com/stn81/kate/log/encoders/simple"
 	"github.com/stn81/kate/rdb"
-	"github.com/cloudflare/tableflip"
-	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -33,11 +33,11 @@ func NewStartCmd() *cobra.Command {
 }
 
 func startCmdFunc(_ *cobra.Command, _ []string) {
-	os.Chdir(app.GetHomeDir())
+	_ = os.Chdir(app.GetHomeDir())
 
 	// load config
 	if err := config.Load(GlobalFlags.ConfigFile); err != nil {
-		fmt.Fprintf(os.Stderr, "load config failed: file=%s, error=%v\n", GlobalFlags.ConfigFile, err)
+		_, _ = fmt.Fprintf(os.Stderr, "load config failed: file=%s, error=%v\n", GlobalFlags.ConfigFile, err)
 	}
 
 	logger := initLogger()
