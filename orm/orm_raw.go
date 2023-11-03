@@ -18,8 +18,9 @@ type RawStmtQueryer interface {
 // RawQueryer raw query seter
 // create From Ormer.Raw
 // for example:
-//  sql := fmt.Sprintf("SELECT %sid%s,%sname%s FROM %suser%s WHERE id = ?",Q,Q,Q,Q,Q,Q)
-//  rs := Ormer.Raw(sql, 1)
+//
+//	sql := fmt.Sprintf("SELECT %sid%s,%sname%s FROM %suser%s WHERE id = ?",Q,Q,Q,Q,Q,Q)
+//	rs := Ormer.Raw(sql, 1)
 type RawQueryer interface {
 	// Exec execute sql and get result
 	Exec() (sql.Result, error)
@@ -204,7 +205,7 @@ func (rq *rawQueryer) QueryRows(container interface{}) error {
 	return nil
 }
 
-// return prepared raw statement for used in times.
+// Prepare return prepared raw statement for used in times.
 func (rq *rawQueryer) Prepare() (RawStmtQueryer, error) {
 	return newRawStmt(rq)
 }

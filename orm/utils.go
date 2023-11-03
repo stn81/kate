@@ -204,7 +204,7 @@ func snakeString(s string) string {
 
 type argString []string
 
-// get string by index from string slice
+// Get string by index from string slice
 func (a argString) Get(i int, args ...string) (r string) {
 	if i >= 0 && i < len(a) {
 		r = a[i]
@@ -216,7 +216,7 @@ func (a argString) Get(i int, args ...string) (r string) {
 
 type argInt []int
 
-// get int by index from int slice
+// Get int by index from int slice
 func (a argInt) Get(i int, args ...int) (r int) {
 	if i >= 0 && i < len(a) {
 		r = a[i]

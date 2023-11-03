@@ -80,7 +80,7 @@ type BindUnmarshaler interface {
 	UnmarshalBind(value string) error
 }
 
-// Bind bind values to struct ptr
+// Bind values to struct ptr
 func Bind(ptr interface{}, tag string, input map[string]interface{}) error {
 	val := reflect.ValueOf(ptr)
 	ind := reflect.Indirect(val)

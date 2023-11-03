@@ -22,7 +22,7 @@ var (
 
 // Ormer define the orm interface
 type Ormer interface {
-	// read data to model
+	// Read data to model
 	// for example:
 	//	this will find User by Id field
 	// 	u = &User{Id: user.Id}
@@ -31,41 +31,41 @@ type Ormer interface {
 	// 	u = &User{UserName: "astaxie", Password: "pass"}
 	//	err = Ormer.Read(u, "UserName")
 	Read(md interface{}, cols ...string) error
-	// Like Read(), but with "FOR UPDATE" clause, useful in transaction.
+	// ReadForUpdate Like Read(), but with "FOR UPDATE" clause, useful in transaction.
 	// Some databases are not support this feature.
 	ReadForUpdate(md interface{}, cols ...string) error
-	// insert model data to database
+	// Insert model data to database
 	// for example:
 	//  user := new(User)
 	//  id, err = Ormer.Insert(user)
 	//  user must a pointer and Insert will set user's pk field
 	Insert(interface{}) (int64, error)
-	// insert some models to database
+	// InsertMulti insert some models to database
 	InsertMulti(bulk int, mds interface{}) (int64, error)
-	// update model to database.
+	// Update model to database.
 	// cols set the columns those want to update.
 	// find model by Id(pk) field and update columns specified by fields, if cols is null then update all columns
 	Update(md interface{}, cols ...string) (int64, error)
-	// delete model in database
+	// Delete delete model in database
 	Delete(md interface{}, cols ...string) (int64, error)
-	// return a QuerySeter for table operations.
+	// QueryTable return a QuerySeter for table operations.
 	// table name can be string or struct.
 	// e.g. QueryTable(&user{}) or QueryTable((*User)(nil)),
 	QueryTable(ptrStruct interface{}) QuerySetter
-	// switch to another registered database driver by given name.
+	// Using switch to another registered database driver by given name.
 	Using(name string)
-	// begin transaction
+	// Begin begin transaction
 	// for example:
 	// 	o := NewOrm(logger)
 	// 	err := o.Begin()
 	// 	...
 	// 	err = o.Rollback()
 	Begin() error
-	// commit transaction
+	// Commit  transaction
 	Commit() error
-	// rollback transaction
+	// Rollback transaction
 	Rollback() error
-	// return a raw query seter for raw sql string.
+	// Raw return a raw query seter for raw sql string.
 	// for example:
 	//	 ormer.Raw("UPDATE `user` SET `user_name` = ? WHERE `user_name` = ?", "slene", "testing").Exec()
 	//	// update user testing's name to slene
@@ -117,7 +117,7 @@ func (o *orm) Read(md interface{}, cols ...string) error {
 	return mi.Read(o.ctx, o.db, ind, cols, false, false)
 }
 
-// read data to model, like Read(), but use "SELECT FOR UPDATE" form
+// ReadForUpdate read data to model, like Read(), but use "SELECT FOR UPDATE" form
 func (o *orm) ReadForUpdate(md interface{}, cols ...string) error {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
@@ -126,7 +126,7 @@ func (o *orm) ReadForUpdate(md interface{}, cols ...string) error {
 	return mi.Read(o.ctx, o.db, ind, cols, true, false)
 }
 
-// insert model data to database
+// Insert model data to database
 func (o *orm) Insert(md interface{}) (int64, error) {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
@@ -142,7 +142,7 @@ func (o *orm) Insert(md interface{}) (int64, error) {
 	return id, nil
 }
 
-// insert some models to database
+// InsertMulti insert some models to database
 func (o *orm) InsertMulti(bulk int, mds interface{}) (int64, error) {
 	sind := reflect.Indirect(reflect.ValueOf(mds))
 
@@ -169,7 +169,7 @@ func (o *orm) InsertMulti(bulk int, mds interface{}) (int64, error) {
 	return mi.InsertMulti(o.ctx, o.db, sind, bulk, tableSuffix)
 }
 
-// update model to database.
+// Update model to database.
 // cols set the columns those want to update.
 func (o *orm) Update(md interface{}, cols ...string) (int64, error) {
 	mi, ind := o.getMiInd(md, true)
@@ -179,7 +179,7 @@ func (o *orm) Update(md interface{}, cols ...string) (int64, error) {
 	return mi.Update(o.ctx, o.db, ind, cols)
 }
 
-// delete model in database
+// Delete model in database
 // cols shows the delete conditions values read from. default is pk
 func (o *orm) Delete(md interface{}, cols ...string) (int64, error) {
 	mi, ind := o.getMiInd(md, true)

@@ -14,7 +14,7 @@ type fields struct {
 	dbcols    []string
 }
 
-// Add add fieldInfo to fields
+// Add fieldInfo to fields
 func (f *fields) Add(fi *fieldInfo) (added bool) {
 	if f.fields[fi.name] == nil && f.columns[fi.column] == nil {
 		f.columns[fi.column] = fi
@@ -29,17 +29,17 @@ func (f *fields) Add(fi *fieldInfo) (added bool) {
 	return true
 }
 
-// get field info by name
+// GetByName get field info by name
 func (f *fields) GetByName(name string) *fieldInfo {
 	return f.fields[name]
 }
 
-// get field info by column name
+// GetByColumn get field info by column name
 func (f *fields) GetByColumn(column string) *fieldInfo {
 	return f.columns[column]
 }
 
-// get field info by string, name is prior
+// GetByAny get field info by string, name is prior
 func (f *fields) GetByAny(name string) (*fieldInfo, bool) {
 	if fi, ok := f.fields[name]; ok {
 		return fi, ok

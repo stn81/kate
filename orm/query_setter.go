@@ -4,13 +4,13 @@ package orm
 type QuerySetter interface {
 	// WithSuffix specifies the table suffix
 	WithSuffix(tableSuffix string) QuerySetter
-	// Set Distinct
+	// Distinct Set Distinct
 	// for example:
 	//  o.QueryTable("policy").Filter("Groups__Group__Users__User", user).
 	//    Distinct().
 	//    All(&permissions)
 	Distinct() QuerySetter
-	// add condition expression to QuerySetter.
+	// Filter add condition expression to QuerySetter.
 	// for example:
 	//	filter by UserName == 'slene'
 	//	qs.Filter("UserName", "slene")
@@ -19,17 +19,17 @@ type QuerySetter interface {
 	// 	 // time compare
 	//	qs.Filter("created", time.Now())
 	Filter(string, ...interface{}) QuerySetter
-	// add NOT condition to querySeter.
+	// Exclude add NOT condition to querySeter.
 	// have the same usage as Filter
 	Exclude(string, ...interface{}) QuerySetter
-	// set condition to QuerySetter.
+	// SetCond set condition to QuerySetter.
 	// sql's where condition
 	//	cond := orm.NewCondition()
 	//	cond1 := cond.And("profile__isnull", false).AndNot("status__in", 1).Or("profile__age__gt", 2000)
 	//	//sql-> WHERE T0.`profile_id` IS NOT NULL AND NOT T0.`Status` IN (?) OR T1.`age` >  2000
 	//	num, err := qs.SetCond(cond1).Count()
 	SetCond(*Condition) QuerySetter
-	// get condition from QuerySetter.
+	// GetCond get condition from QuerySetter.
 	// sql's where condition
 	//  cond := orm.NewCondition()
 	//  cond = cond.And("profile__isnull", false).AndNot("status__in", 1)
@@ -39,29 +39,29 @@ type QuerySetter interface {
 	//  //sql-> WHERE T0.`profile_id` IS NOT NULL AND NOT T0.`Status` IN (?) OR T1.`age` >  2000
 	//  num, err := qs.SetCond(cond).Count()
 	GetCond() *Condition
-	// add GROUP BY expression
+	// GroupBy add GROUP BY expression
 	// for example:
 	//	qs.GroupBy("id")
 	GroupBy(exprs ...string) QuerySetter
-	// add ORDER expression.
+	// OrderBy add ORDER expression.
 	// "column" means ASC, "-column" means DESC.
 	// for example:
 	//	qs.OrderBy("-status")
 	OrderBy(exprs ...string) QuerySetter
-	// add OFFSET value
+	// Offset add OFFSET value
 	Offset(offset int) QuerySetter
-	// add LIMIT value.
+	// Limit add LIMIT value.
 	Limit(limit int) QuerySetter
-	// for update
+	// ForUpdate for update
 	ForUpdate() QuerySetter
-	// return QuerySetter execution result number
+	// Count return QuerySetter execution result number
 	// for example:
 	//	num, err = qs.Filter("profile__age__gt", 28).Count()
 	Count() (int64, error)
-	// check result empty or not after QuerySetter executed
+	// Exist check result empty or not after QuerySetter executed
 	// the same as QuerySetter.Count > 0
 	Exist() (bool, error)
-	// execute update with parameters
+	// Update execute update with parameters
 	// for example:
 	//	num, err = qs.Filter("user_name", "slene").Update(Params{
 	//		"Nums": ColValue(Col_Minus, 50),
@@ -70,12 +70,12 @@ type QuerySetter interface {
 	//		"user_name": "slene2"
 	//	}) // user slene's  name will change to slene2
 	Update(values Params) (int64, error)
-	// delete from table
+	// Delete delete from table
 	//for example:
 	//	num ,err = qs.Filter("user_name__in", "testing1", "testing2").Delete()
 	// 	//delete two user  who's name is testing1 or testing2
 	Delete() (int64, error)
-	// return a insert queryer.
+	// PrepareInsert return a insert queryer.
 	// it can be used in times.
 	// example:
 	// 	i,err := sq.PrepareInsert()
@@ -83,13 +83,13 @@ type QuerySetter interface {
 	//	num, err = i.Insert(&user2) // user table will add one record user2 at once
 	//	err = i.Close() //don't forget call Close
 	PrepareInsert() (Inserter, error)
-	// query all data and map to containers.
+	// All query all data and map to containers.
 	// cols means the columns when querying.
 	// for example:
 	//	var users []*User
 	//	qs.All(&users) // users[0],users[1],users[2] ...
 	All(container interface{}, cols ...string) error
-	// query one row data and map to containers.
+	// One query one row data and map to containers.
 	// cols means the columns when querying.
 	// for example:
 	//	var user User
@@ -220,10 +220,11 @@ func (qs *querySetter) Delete() (int64, error) {
 // return a insert queryer.
 // it can be used in times.
 // example:
-// 	 i,err := sq.PrepareInsert()
-// 	 num, err = i.Insert(&user1) // user table will add one record user1 at once
-//	 num, err = i.Insert(&user2) // user table will add one record user2 at once
-//	 err = i.Close() //don't forget call Close
+//
+//	i,err := sq.PrepareInsert()
+//	num, err = i.Insert(&user1) // user table will add one record user1 at once
+//	num, err = i.Insert(&user2) // user table will add one record user2 at once
+//	err = i.Close() //don't forget call Close
 func (qs *querySetter) PrepareInsert() (Inserter, error) {
 	return newPreparedInserter(qs.orm, qs.mi, qs.tableSuffix)
 }

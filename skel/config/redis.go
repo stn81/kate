@@ -11,7 +11,7 @@ import (
 // Redis is the redis config instance
 var Redis = &RedisConfig{Config: &rdb.Config{}}
 
-// Config defines the redis config
+// RedisConfig defines the redis config
 type RedisConfig struct {
 	*rdb.Config
 }
@@ -35,11 +35,12 @@ func (conf *RedisConfig) Load(section *ini.Section) error {
 	conf.ReadTimeout = section.Key("read_timeout").MustDuration(20 * time.Millisecond)
 	conf.WriteTimeout = section.Key("write_timeout").MustDuration(20 * time.Millisecond)
 	conf.PoolSize = section.Key("pool_size").MustInt(100)
-	conf.MinIdleConns = section.Key("min_idle_conns").MustInt(20)
-	conf.ConnMaxIdleTime = section.Key("max_conn_age").MustDuration(0)
 	conf.PoolTimeout = section.Key("pool_timeout").MustDuration(20 * time.Millisecond)
-	conf.IdleTimeout = section.Key("idle_timeout").MustDuration(30 * time.Second)
-	conf.IdleCheckFrequency = section.Key("idle_check_frequency").MustDuration(0)
+	conf.MinIdleConns = section.Key("min_idle_conns").MustInt(4)
+	conf.MaxIdleConns = section.Key("max_idle_conns").MustInt(32)
+	conf.MaxActiveConns = section.Key("max_active_conns").MustInt(64)
+	conf.ConnMaxIdleTime = section.Key("conn_max_idle_time").MustDuration(0)
+	conf.ConnMaxLifetime = section.Key("conn_max_life_time").MustDuration(0)
 
 	return nil
 }

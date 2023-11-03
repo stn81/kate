@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/stn81/kate/app"
 	"github.com/spf13/cobra"
+	"github.com/stn81/kate/app"
 )
 
 func NewVersionCmd() *cobra.Command {

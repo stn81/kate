@@ -10,6 +10,7 @@ type Sampler struct {
 	first, thereafter uint64
 }
 
+// New
 // 每tick间隔内:
 // 1. 对前first个请求返回true
 // 2. 之后开始采样，采样率为1/thereafter

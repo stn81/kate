@@ -29,7 +29,7 @@ type httpService struct {
 	accessLogger *zap.Logger
 }
 
-// Start start the http service
+// Start the http service
 func Start(upgrader *tableflip.Upgrader, logger *zap.Logger) {
 	if gService != nil {
 		panic("httpsrv start twice")
@@ -43,7 +43,7 @@ func Start(upgrader *tableflip.Upgrader, logger *zap.Logger) {
 	gService.start()
 }
 
-// Stop stop the http service
+// Stop the http service
 func Stop() {
 	if gService != nil {
 		gService.stop()

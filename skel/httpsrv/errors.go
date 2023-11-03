@@ -14,7 +14,7 @@ var (
 	ErrServerInternal = NewError(errnoInternal, "服务器内部错误")
 )
 
-// ErrBadParam returns a instance of bad param ErrorInfo.
+// ErrBadParam returns an instance of bad param ErrorInfo.
 func ErrBadParam(v interface{}) ErrorInfo {
 	var errMsg string
 	switch err := v.(type) {

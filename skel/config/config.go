@@ -11,7 +11,7 @@ type Config interface {
 	// SectionName return the section name
 	SectionName() string
 
-	// Load load the config in the section specified in `SectionName()`
+	// Load the config in the section specified in `SectionName()`
 	Load(*ini.Section) error
 }
 

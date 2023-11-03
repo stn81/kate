@@ -27,7 +27,7 @@ type grpcService struct {
 	accessLogger *zap.Logger
 }
 
-// Start start the grpc service
+// Start the grpc service
 func Start(upgrader *tableflip.Upgrader, logger *zap.Logger) {
 	if gService != nil {
 		panic("grpcsrv start twice")
@@ -41,7 +41,7 @@ func Start(upgrader *tableflip.Upgrader, logger *zap.Logger) {
 	gService.start()
 }
 
-// Stop stop the grpc service
+// Stop the grpc service
 func Stop() {
 	if gService != nil {
 		gService.stop()
