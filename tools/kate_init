@@ -40,6 +40,7 @@ mv "${APP_HOME}/app/__APP_NAME__/" "${APP_HOME}/app/${APP_NAME}/"
 
 echo '[2] go mod init'
 go mod init ${PACKAGE_NAME}
+go mod edit -replace=google.golang.org/grpc=github.com/grpc/grpc-go@latest
 
 echo '[3] go mod tidy'
 go mod tidy
