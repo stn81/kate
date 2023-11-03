@@ -34,14 +34,14 @@ function do_inflate() {
 }
 
 export -f do_inflate
-find . -type f -print |grep -v .git|xargs -n 1 -P 10 -I {} bash -c 'do_inflate "$@"' _ {}
+find . -type f -print |grep -v .git|xargs -P 10 -I {} bash -c 'do_inflate "$@"' _ {}
 
 mv "${APP_HOME}/app/__APP_NAME__/" "${APP_HOME}/app/${APP_NAME}/"
 
 echo '[2] go mod init'
 go mod init ${PACKAGE_NAME}
 echo '[3] update kate'
-go get -u github.com/stn81/kate/v2@latest
+go get -u github.com/stn81/kate@latest
 echo '[4] go mod vendor'
 go mod vendor
 
