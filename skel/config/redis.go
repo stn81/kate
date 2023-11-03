@@ -36,7 +36,7 @@ func (conf *RedisConfig) Load(section *ini.Section) error {
 	conf.WriteTimeout = section.Key("write_timeout").MustDuration(20 * time.Millisecond)
 	conf.PoolSize = section.Key("pool_size").MustInt(100)
 	conf.MinIdleConns = section.Key("min_idle_conns").MustInt(20)
-	conf.MaxConnAge = section.Key("max_conn_age").MustDuration(0)
+	conf.ConnMaxIdleTime = section.Key("max_conn_age").MustDuration(0)
 	conf.PoolTimeout = section.Key("pool_timeout").MustDuration(20 * time.Millisecond)
 	conf.IdleTimeout = section.Key("idle_timeout").MustDuration(30 * time.Second)
 	conf.IdleCheckFrequency = section.Key("idle_check_frequency").MustDuration(0)

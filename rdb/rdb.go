@@ -1,9 +1,9 @@
 package rdb
 
 import (
+	"context"
+	"github.com/redis/go-redis/v9"
 	"time"
-
-	"github.com/go-redis/redis"
 )
 
 const (
@@ -18,32 +18,33 @@ const (
 // Client is the client interface for redis db
 type Client interface {
 	redis.Cmdable
-	Do(args ...interface{}) *redis.Cmd
-	Process(cmd redis.Cmder) error
+	Do(context context.Context, args ...interface{}) *redis.Cmd
+	Process(context context.Context, cmd redis.Cmder) error
 	Close() error
 }
 
 // Config defines the redis config
 type Config struct {
-	Addrs              []string
-	DB                 int
-	Password           string
-	ClusterEnabled     bool
-	ReadOnly           bool
-	RouteMode          string
-	MaxRedirects       int
-	MaxRetries         int
-	MinRetryBackoff    time.Duration
-	MaxRetryBackoff    time.Duration
-	ConnectTimeout     time.Duration
-	ReadTimeout        time.Duration
-	WriteTimeout       time.Duration
-	PoolSize           int
-	MinIdleConns       int
-	MaxConnAge         time.Duration
-	PoolTimeout        time.Duration
-	IdleTimeout        time.Duration
-	IdleCheckFrequency time.Duration
+	Addrs           []string
+	DB              int
+	Password        string
+	ClusterEnabled  bool
+	ReadOnly        bool
+	RouteMode       string
+	MaxRedirects    int
+	MaxRetries      int
+	MinRetryBackoff time.Duration
+	MaxRetryBackoff time.Duration
+	ConnectTimeout  time.Duration
+	ReadTimeout     time.Duration
+	WriteTimeout    time.Duration
+	PoolSize        int
+	PoolTimeout     time.Duration
+	MinIdleConns    int
+	MaxIdleConns    int
+	MaxActiveConns  int
+	ConnMaxIdleTime time.Duration
+	ConnMaxLifetime time.Duration
 }
 
 var rdb Client
@@ -59,21 +60,21 @@ func Init(conf *Config) {
 
 func newClient(conf *Config) *redis.Client {
 	opt := &redis.Options{
-		Addr:               conf.Addrs[0],
-		DB:                 conf.DB,
-		Password:           conf.Password,
-		MaxRetries:         conf.MaxRetries,
-		MinRetryBackoff:    conf.MinRetryBackoff,
-		MaxRetryBackoff:    conf.MaxRetryBackoff,
-		DialTimeout:        conf.ConnectTimeout,
-		ReadTimeout:        conf.ReadTimeout,
-		WriteTimeout:       conf.WriteTimeout,
-		PoolSize:           conf.PoolSize,
-		MinIdleConns:       conf.MinIdleConns,
-		MaxConnAge:         conf.MaxConnAge,
-		PoolTimeout:        conf.PoolTimeout,
-		IdleTimeout:        conf.IdleTimeout,
-		IdleCheckFrequency: conf.IdleCheckFrequency,
+		Addr:            conf.Addrs[0],
+		DB:              conf.DB,
+		Password:        conf.Password,
+		MaxRetries:      conf.MaxRetries,
+		MinRetryBackoff: conf.MinRetryBackoff,
+		MaxRetryBackoff: conf.MaxRetryBackoff,
+		DialTimeout:     conf.ConnectTimeout,
+		ReadTimeout:     conf.ReadTimeout,
+		WriteTimeout:    conf.WriteTimeout,
+		PoolSize:        conf.PoolSize,
+		MinIdleConns:    conf.MinIdleConns,
+		MaxIdleConns:    conf.MaxIdleConns,
+		ConnMaxIdleTime: conf.ConnMaxIdleTime,
+		ConnMaxLifetime: conf.ConnMaxLifetime,
+		PoolTimeout:     conf.PoolTimeout,
 	}
 
 	return redis.NewClient(opt)
@@ -81,21 +82,21 @@ func newClient(conf *Config) *redis.Client {
 
 func newClusterClient(conf *Config) *redis.ClusterClient {
 	opt := &redis.ClusterOptions{
-		Addrs:              conf.Addrs,
-		Password:           conf.Password,
-		MaxRedirects:       conf.MaxRedirects,
-		MaxRetries:         conf.MaxRetries,
-		MinRetryBackoff:    conf.MinRetryBackoff,
-		MaxRetryBackoff:    conf.MaxRetryBackoff,
-		DialTimeout:        conf.ConnectTimeout,
-		ReadTimeout:        conf.ReadTimeout,
-		WriteTimeout:       conf.WriteTimeout,
-		PoolSize:           conf.PoolSize,
-		MinIdleConns:       conf.MinIdleConns,
-		MaxConnAge:         conf.MaxConnAge,
-		PoolTimeout:        conf.PoolTimeout,
-		IdleTimeout:        conf.IdleTimeout,
-		IdleCheckFrequency: conf.IdleCheckFrequency,
+		Addrs:           conf.Addrs,
+		Password:        conf.Password,
+		MaxRedirects:    conf.MaxRedirects,
+		MaxRetries:      conf.MaxRetries,
+		MinRetryBackoff: conf.MinRetryBackoff,
+		MaxRetryBackoff: conf.MaxRetryBackoff,
+		DialTimeout:     conf.ConnectTimeout,
+		ReadTimeout:     conf.ReadTimeout,
+		WriteTimeout:    conf.WriteTimeout,
+		PoolSize:        conf.PoolSize,
+		MinIdleConns:    conf.MinIdleConns,
+		MaxIdleConns:    conf.MaxIdleConns,
+		MaxActiveConns:  conf.MaxActiveConns,
+		ConnMaxIdleTime: conf.ConnMaxIdleTime,
+		PoolTimeout:     conf.PoolTimeout,
 	}
 
 	switch conf.RouteMode {
@@ -118,7 +119,7 @@ func Uninit() {
 	}
 }
 
-// Get() return the rdb client instance
+// Get return the rdb client instance
 func Get() Client {
 	return rdb
 }

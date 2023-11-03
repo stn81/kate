@@ -40,9 +40,12 @@ mv "${APP_HOME}/app/__APP_NAME__/" "${APP_HOME}/app/${APP_NAME}/"
 
 echo '[2] go mod init'
 go mod init ${PACKAGE_NAME}
-echo '[3] update kate'
+
+echo '[3] go mod tidy'
+go mod tidy
+echo '[4] update kate'
 go get -u github.com/stn81/kate@latest
-echo '[4] go mod vendor'
+echo '[5] go mod vendor'
 go mod vendor
 
 echo '[5] done.'

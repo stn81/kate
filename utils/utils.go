@@ -2,9 +2,9 @@ package utils
 
 import (
 	"bytes"
+	"cmp"
 	"errors"
 	"fmt"
-	"golang.org/x/exp/constraints"
 	"reflect"
 	"strings"
 )
@@ -18,7 +18,7 @@ func Abs(v int64) int64 {
 }
 
 // Min return the minimum value
-func Min[T constraints.Ordered](v ...T) T {
+func Min[T cmp.Ordered](v ...T) T {
 	min := v[0]
 	for i := 1; i < len(v); i++ {
 		if v[i] < min {
@@ -29,7 +29,7 @@ func Min[T constraints.Ordered](v ...T) T {
 }
 
 // Max return the maximum value
-func Max[T constraints.Ordered](v ...T) T {
+func Max[T cmp.Ordered](v ...T) T {
 	max := v[0]
 	for i := 1; i < len(v); i++ {
 		if v[i] > max {
