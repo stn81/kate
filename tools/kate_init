@@ -10,8 +10,8 @@ export X_OS_TYPE=$(uname)
 GOPATH=${GOPATH#:}
 
 echo '[1] initializing project'
-KATE_DIR=$GOPATH/src/github.com/stn81/kate
-SKEL_DIR=$KATE_DIR/skel
+KATE_HOME=$(dirname $(dirname $(realpath $0)))
+SKEL_DIR=$KATE_HOME/skel
 
 if [ -z $SKEL_DIR ]; then
     echo "skel dir not found"
