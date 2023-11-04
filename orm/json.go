@@ -29,7 +29,7 @@ func (jv *JSONValue) Value() (driver.Value, error) {
 			return "", nil
 		}
 
-		if IsEmptyValue(reflect.ValueOf(jv.addr)) {
+		if reflect.ValueOf(jv.addr).IsZero() {
 			return "", nil
 		}
 	}

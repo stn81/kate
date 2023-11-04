@@ -23,18 +23,17 @@ func SetDefaults(ptr interface{}) error {
 	numField := ind.NumField()
 	for i := 0; i < numField; i++ {
 		structField := typ.Field(i)
-		field := ind.Field(i)
+		defaultValue := structField.Tag.Get("default")
+		if defaultValue == "" {
+			continue
+		}
 
+		field := ind.Field(i)
 		if !field.CanSet() {
 			continue
 		}
 
-		if !IsEmptyValue(field) {
-			continue
-		}
-
-		defaultValue := structField.Tag.Get("default")
-		if defaultValue == "" {
+		if field.IsZero() {
 			continue
 		}
 

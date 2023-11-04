@@ -59,13 +59,13 @@ func NewQueryParamsFromTag(ptr interface{}) *QueryParams {
 		perPage = reflect.Indirect(ind.FieldByName("PerPage"))
 	)
 
-	if !utils.IsEmptyValue(sort) {
+	if !sort.IsZero() {
 		if sorts, ok := sort.Interface().([]string); ok {
 			params.SetOrderBy(sorts)
 		}
 	}
 
-	if !utils.IsEmptyValue(page) && !utils.IsEmptyValue(perPage) {
+	if !page.IsZero() && !perPage.IsZero() {
 		params.SetPagination(int(page.Int()), int(perPage.Int()))
 	}
 
