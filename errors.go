@@ -1,6 +1,8 @@
-package httpsrv
+package kate
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var (
 	errnoSuccess  = 0  // success

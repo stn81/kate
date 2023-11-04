@@ -1,4 +1,4 @@
-package httpsrv
+package middleware
 
 import (
 	"context"

@@ -1,7 +1,8 @@
-package kate
+package middleware
 
 import (
 	"context"
+	"github.com/stn81/kate"
 )
 
 // Chain is the middleware chain
@@ -18,7 +19,7 @@ func NewChain(middlewares ...Middleware) Chain {
 }
 
 // Then return a handler wrapped by the middleware chain
-func (c Chain) Then(h ContextHandler) ContextHandler {
+func (c Chain) Then(h kate.ContextHandler) kate.ContextHandler {
 	if h == nil {
 		panic("handler == nil")
 	}
@@ -33,8 +34,8 @@ func (c Chain) Then(h ContextHandler) ContextHandler {
 }
 
 // ThenFunc return a handler wrapped by the middleware chain
-func (c Chain) ThenFunc(h func(context.Context, ResponseWriter, *Request)) ContextHandler {
-	return c.Then(ContextHandlerFunc(h))
+func (c Chain) ThenFunc(h func(context.Context, kate.ResponseWriter, *kate.Request)) kate.ContextHandler {
+	return c.Then(kate.ContextHandlerFunc(h))
 }
 
 // Append return a new middleware chain with new middleware appended

@@ -1,4 +1,4 @@
-package httpsrv
+package kate
 
 // ErrorInfo defines the error type
 type ErrorInfo interface {
@@ -8,8 +8,8 @@ type ErrorInfo interface {
 
 // errSimple define a basic error type which implements the ErrorInfo interface
 type errSimple struct {
-	ErrCode    int
-	ErrMessage string
+	ErrCode    int    `json:"code"`
+	ErrMessage string `json:"message"`
 }
 
 // NewError create an errSimple instance

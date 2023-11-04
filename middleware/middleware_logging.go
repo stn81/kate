@@ -1,4 +1,4 @@
-package httpsrv
+package middleware
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 )
 
 // Logging implements the request in/out logging middleware
-func Logging(logger *zap.Logger) kate.Middleware {
+func Logging(logger *zap.Logger) Middleware {
 	mf := func(h kate.ContextHandler) kate.ContextHandler {
 		f := func(ctx context.Context, w kate.ResponseWriter, r *kate.Request) {
 			start := time.Now()

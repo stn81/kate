@@ -1,4 +1,4 @@
-package httpsrv
+package kate
 
 // Result define the handle result for http request
 type Result struct {
