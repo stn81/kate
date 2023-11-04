@@ -20,6 +20,7 @@ import (
 	"__PACKAGE_NAME__/config"
 	"__PACKAGE_NAME__/grpcsrv"
 	"__PACKAGE_NAME__/httpsrv"
+	"__PACKAGE_NAME__/model"
 	"__PACKAGE_NAME__/profiling"
 )
 
@@ -72,6 +73,8 @@ func startCmdFunc(_ *cobra.Command, _ []string) {
 
 	rdb.Init(config.Redis.Config)
 	defer rdb.Uninit()
+
+	model.Init(logger)
 
 	// setup upgrader to support zero-downtime upgrade/restart
 	upgrader, err := tableflip.New(tableflip.Options{
