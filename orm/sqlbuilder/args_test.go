@@ -68,7 +68,7 @@ func toPostgreSQL(sql string) string {
 	buf.WriteString(parts[0])
 
 	for i, p := range parts[1:] {
-		fmt.Fprintf(buf, "$%v", i+1)
+		_, _ = fmt.Fprintf(buf, "$%v", i+1)
 		buf.WriteString(p)
 	}
 

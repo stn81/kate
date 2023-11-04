@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
@@ -66,7 +65,7 @@ func UpdatePIDFile(fileName string) error {
 		return fmt.Errorf("failed to create dir: dir=%v, error=%w", runDir, err)
 	}
 
-	if err = ioutil.WriteFile(fileName, []byte(strconv.Itoa(pid)), 0666); err != nil {
+	if err = os.WriteFile(fileName, []byte(strconv.Itoa(pid)), 0666); err != nil {
 		return fmt.Errorf("failed to write pid: file=%v, pid=%v, error=%v", fileName, pid, err)
 	}
 
@@ -78,7 +77,6 @@ func UpdatePIDFile(fileName string) error {
 // RemovePIDFile do the application clean up
 func RemovePIDFile() {
 	if pidFile != "" {
-		// nolint:errcheck
 		_ = os.Remove(pidFile)
 	}
 }

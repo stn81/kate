@@ -3,6 +3,7 @@ package httpsrv
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/stn81/kate/log/ctxzap"
@@ -10,9 +11,9 @@ import (
 )
 
 // Error writes out an error response
-func Error(ctx context.Context, w http.ResponseWriter, err interface{}) {
-	errInfo, ok := err.(ErrorInfo)
-	if !ok {
+func Error(ctx context.Context, w http.ResponseWriter, err error) {
+	var errInfo ErrorInfo
+	if !errors.As(err, &errInfo) {
 		errInfo = ErrServerInternal
 	}
 
@@ -21,7 +22,8 @@ func Error(ctx context.Context, w http.ResponseWriter, err interface{}) {
 		ErrMsg: errInfo.Error(),
 	}
 
-	if errInfoWithData, ok := errInfo.(ErrorInfoWithData); ok {
+	var errInfoWithData ErrorInfoWithData
+	if errors.As(errInfo, &errInfoWithData) {
 		result.Data = errInfoWithData.Data()
 	}
 

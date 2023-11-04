@@ -24,16 +24,18 @@ const (
 )
 
 // ColValue do the field raw changes. e.g Nums = Nums + 10. usage:
-// 	Params{
-// 		"Nums": ColValue(Col_Add, 10),
-// 	}
+//
+//	Params{
+//		"Nums": ColValue(Col_Add, 10),
+//	}
 func ColValue(op operator, value interface{}) interface{} {
 	switch op {
 	case ColAdd, ColSub, ColMul, ColDiv:
 	default:
 		panic(fmt.Errorf("orm.ColValue wrong operator"))
 	}
-	v, err := StrTo(ToStr(value)).Int64()
+	to := StrTo(ToStr(value))
+	v, err := to.Int64()
 	if err != nil {
 		panic(fmt.Errorf("orm.ColValue doesn't support non string/numeric type, %s", err))
 	}

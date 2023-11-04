@@ -50,7 +50,6 @@ func (w *responseWriter) Flush() {
 	if !w.wroteHeader {
 		w.WriteHeader(http.StatusOK)
 	}
-	// nolint:errcheck
 	flusher := w.ResponseWriter.(http.Flusher)
 	flusher.Flush()
 }

@@ -3,7 +3,8 @@ package kate
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"errors"
+	"io"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -24,7 +25,7 @@ func (h ContextHandlerFunc) ServeHTTP(ctx context.Context, w ResponseWriter, r *
 	h(ctx, w, r)
 }
 
-// Handle adapte the ContextHandler to httprouter.Handle func
+// Handle adapt the ContextHandler to httprouter.Handle func
 func Handle(ctx context.Context, h ContextHandler, maxBodyBytes int64) httprouter.Handle {
 	f := func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		var (
@@ -51,34 +52,31 @@ func Handle(ctx context.Context, h ContextHandler, maxBodyBytes int64) httproute
 			r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		}
 
-		if request.RawBody, err = ioutil.ReadAll(r.Body); err != nil {
+		if request.RawBody, err = io.ReadAll(r.Body); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			// nolint:errcheck
-			w.Write([]byte(http.StatusText(http.StatusBadRequest)))
+			_, _ = w.Write([]byte(http.StatusText(http.StatusBadRequest)))
 			return
 		}
-		// nolint:errcheck
-		r.Body.Close()
+		_ = r.Body.Close()
 
-		r.Body = ioutil.NopCloser(bytes.NewReader(request.RawBody))
+		r.Body = io.NopCloser(bytes.NewReader(request.RawBody))
 
 		err = r.ParseMultipartForm(maxBodyBytes)
 		switch {
-		case err == http.ErrNotMultipart:
+		case errors.Is(err, http.ErrNotMultipart):
 		case err != nil:
 			w.WriteHeader(http.StatusInternalServerError)
-			// nolint:errcheck
-			w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+			_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
 			logger.Error("read request", zap.Error(err))
 			return
 		}
 
 		h.ServeHTTP(newctx, response, request)
 	}
-	return httprouter.Handle(f)
+	return f
 }
 
-// StdHandler adapte ContextHandler to http.Handler interface
+// StdHandler adapt ContextHandler to http.Handler interface
 func StdHandler(ctx context.Context, h ContextHandler, maxBodyBytes int64) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
 		var (
@@ -104,24 +102,21 @@ func StdHandler(ctx context.Context, h ContextHandler, maxBodyBytes int64) http.
 			r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		}
 
-		if request.RawBody, err = ioutil.ReadAll(r.Body); err != nil {
+		if request.RawBody, err = io.ReadAll(r.Body); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			// nolint:errcheck
-			w.Write([]byte(http.StatusText(http.StatusBadRequest)))
+			_, _ = w.Write([]byte(http.StatusText(http.StatusBadRequest)))
 			return
 		}
-		// nolint:errcheck
-		r.Body.Close()
+		_ = r.Body.Close()
 
-		r.Body = ioutil.NopCloser(bytes.NewReader(request.RawBody))
+		r.Body = io.NopCloser(bytes.NewReader(request.RawBody))
 
 		err = r.ParseMultipartForm(maxBodyBytes)
 		switch {
 		case err == http.ErrNotMultipart:
 		case err != nil:
 			w.WriteHeader(http.StatusInternalServerError)
-			// nolint:errcheck
-			w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+			_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
 			logger.Error("read request", zap.Error(err))
 			return
 		}

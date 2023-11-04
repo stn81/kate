@@ -26,7 +26,6 @@ func NewReader(fileName string, skipLine int) (reader *Reader, err error) {
 			if err == io.EOF {
 				break
 			}
-			// nolint:errcheck
 			_ = reader.file.Close()
 			return nil, err
 		}

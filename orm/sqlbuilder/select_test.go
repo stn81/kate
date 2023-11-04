@@ -29,8 +29,8 @@ func ExampleSelectBuilder() {
 	sb.OrderBy("modified_at").Asc()
 	sb.Limit(10).Offset(5)
 
-	sql, args := sb.Build()
-	fmt.Println(sql)
+	stmt, args := sb.Build()
+	fmt.Println(stmt)
 	fmt.Println(args)
 
 	// Output:
@@ -58,8 +58,8 @@ func ExampleSelectBuilder_advancedUsage() {
 		innerSb.NotIn("name", Flatten([]string{"Huan Du", "Charmy Liu"})...),
 	)
 
-	sql, args := sb.Build()
-	fmt.Println(sql)
+	stmt, args := sb.Build()
+	fmt.Println(stmt)
 	fmt.Println(args)
 
 	// Output:
@@ -83,8 +83,8 @@ func ExampleSelectBuilder_join() {
 		"u.modified_at > u.created_at + " + sb.Var(86400), // It's allowed to write arbitrary SQL.
 	)
 
-	sql, args := sb.Build()
-	fmt.Println(sql)
+	stmt, args := sb.Build()
+	fmt.Println(stmt)
 	fmt.Println(args)
 
 	// Output:

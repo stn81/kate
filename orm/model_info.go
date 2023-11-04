@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -104,7 +105,7 @@ func (mi *modelInfo) addFields(ind reflect.Value, mName string, index []int) {
 		}
 
 		fi, err = newFieldInfo(mi, field, sf, mName)
-		if err == errSkipField {
+		if errors.Is(err, errSkipField) {
 			err = nil
 			continue
 		} else if err != nil {
@@ -183,7 +184,7 @@ func (mi *modelInfo) getValues(ind reflect.Value, anyNames []string) []interface
 
 // getValueContainers return a containers slice used for row.Scan(containers...)
 func (mi *modelInfo) getValueContainers(ind reflect.Value, columns []string, ignoreUnknown bool) ([]string, []interface{}) {
-	dynColumns := []string{}
+	var dynColumns []string
 	containers := make([]interface{}, len(columns))
 	for i, column := range columns {
 		fi, ok := mi.fields.GetByAny(column)

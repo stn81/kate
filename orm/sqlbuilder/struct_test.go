@@ -190,7 +190,7 @@ func TestStructAddr(t *testing.T) {
 		CreatedAt: 1234567890,
 	}
 	str := fmt.Sprintf("%v %v %v %v", expected.ID, expected.Name, expected.Status, expected.CreatedAt)
-	fmt.Sscanf(str, "%d%s%d%d", userForTest.Addr(user)...)
+	_, _ = fmt.Sscanf(str, "%d%s%d%d", userForTest.Addr(user)...)
 
 	if !reflect.DeepEqual(expected, user) {
 		t.Fatalf("invalid user. [expected:%v] [actual:%v]", expected, user)
@@ -207,7 +207,7 @@ func TestStructAddrForTag(t *testing.T) {
 	}
 	user.CreatedAt = 9876543210
 	str := fmt.Sprintf("%v %v %v %v", expected.ID, expected.Name, expected.Status, expected.CreatedAt)
-	fmt.Sscanf(str, "%d%s%d%d", userForTest.AddrForTag("important", user)...)
+	_, _ = fmt.Sscanf(str, "%d%s%d%d", userForTest.AddrForTag("important", user)...)
 	expected.CreatedAt = 9876543210
 
 	if !reflect.DeepEqual(expected, user) {
@@ -224,7 +224,7 @@ func TestStructAddrWithCols(t *testing.T) {
 		CreatedAt: 1234567890,
 	}
 	str := fmt.Sprintf("%v %v %v %v", expected.Name, expected.ID, expected.CreatedAt, expected.Status)
-	fmt.Sscanf(str, "%s%d%d%d", userForTest.AddrWithCols([]string{"Name", "id", "created_at", "status"}, user)...)
+	_, _ = fmt.Sscanf(str, "%s%d%d%d", userForTest.AddrWithCols([]string{"Name", "id", "created_at", "status"}, user)...)
 
 	if !reflect.DeepEqual(expected, user) {
 		t.Fatalf("invalid user. [expected:%v] [actual:%v]", expected, user)
@@ -266,7 +266,7 @@ func (rows testRows) Close() error {
 }
 
 func (rows testRows) Scan(dest ...interface{}) error {
-	fmt.Sscan("1234 huandu 1", dest...)
+	_, _ = fmt.Sscan("1234 huandu 1", dest...)
 	return nil
 }
 
@@ -298,11 +298,13 @@ func ExampleStruct_useStructAsORM() {
 	// Execute the query.
 	sql, args := sb.Build()
 	rows, _ := db.Query(sql, args...)
-	defer rows.Close()
+	defer func(rows testRows) {
+		_ = rows.Close()
+	}(rows)
 
 	// Scan row data to user.
 	var user User
-	rows.Scan(userStruct.Addr(&user)...)
+	_ = rows.Scan(userStruct.Addr(&user)...)
 
 	fmt.Println(sql)
 	fmt.Println(args)
@@ -356,7 +358,7 @@ func ExampleStruct_useTag() {
 		sql, args := orderStruct.SelectFromForTag(table, tag).Where("id = 1234").Build()
 		rows, _ := db.Query(sql, args...)
 		defer rows.Close()
-		rows.Scan(orderStruct.AddrForTag(tag, &order)...)
+		_ = rows.Scan(orderStruct.AddrForTag(tag, &order)...)
 
 		// Discount for this user.
 		// Use tag "update" to update necessary columns only.
@@ -376,8 +378,10 @@ func ExampleStruct_useTag() {
 		var order Order
 		sql, args := orderStruct.SelectFromForTag(table, tag).Where("id = 1234").Build()
 		rows, _ := db.Query(sql, args...)
-		defer rows.Close()
-		rows.Scan(orderStruct.AddrForTag(tag, &order)...)
+		defer func(rows testRows) {
+			_ = rows.Close()
+		}(rows)
+		_ = rows.Scan(orderStruct.AddrForTag(tag, &order)...)
 
 		// Update state to paid when user has paid for the order.
 		// Use tag "paid" to update necessary columns only.

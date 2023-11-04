@@ -121,7 +121,6 @@ func (te *TimerEngine) loop() {
 
 					for te := tasks.Front(); te != nil; te = next {
 						next = te.Next()
-						// nolint:errcheck
 						task := te.Value.(*TimerTask)
 
 						if task.ready() {

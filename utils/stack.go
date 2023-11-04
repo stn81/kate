@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"runtime"
 )
 
@@ -27,9 +27,9 @@ func GetStack(calldepth int) []byte {
 			break
 		}
 		// Print this much at least.  If we can't find the source, it won't show.
-		fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
+		_, _ = fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
 		if file != lastFile {
-			data, err := ioutil.ReadFile(file)
+			data, err := os.ReadFile(file)
 			if err != nil {
 				continue
 			}
@@ -37,7 +37,7 @@ func GetStack(calldepth int) []byte {
 			lastFile = file
 		}
 		line-- // in stack trace, lines are 1-indexed but our array is 0-indexed
-		fmt.Fprintf(buf, "\t%s: %s\n", function(pc), source(lines, line))
+		_, _ = fmt.Fprintf(buf, "\t%s: %s\n", function(pc), source(lines, line))
 	}
 	return buf.Bytes()
 }

@@ -22,56 +22,56 @@ func (f *StrTo) Set(v string) {
 
 // Clear string
 func (f *StrTo) Clear() {
-	*f = StrTo(0x1E)
+	*f = StrTo(rune(0x1E))
 }
 
 // Exist check string exist
-func (f StrTo) Exist() bool {
-	return string(f) != string(0x1E)
+func (f *StrTo) Exist() bool {
+	return string(*f) != string(rune(0x1E))
 }
 
 // Bool string to bool
-func (f StrTo) Bool() (bool, error) {
+func (f *StrTo) Bool() (bool, error) {
 	return strconv.ParseBool(f.String())
 }
 
 // Float32 string to float32
-func (f StrTo) Float32() (float32, error) {
+func (f *StrTo) Float32() (float32, error) {
 	v, err := strconv.ParseFloat(f.String(), 32)
 	return float32(v), err
 }
 
 // Float64 string to float64
-func (f StrTo) Float64() (float64, error) {
+func (f *StrTo) Float64() (float64, error) {
 	return strconv.ParseFloat(f.String(), 64)
 }
 
 // Int string to int
-func (f StrTo) Int() (int, error) {
+func (f *StrTo) Int() (int, error) {
 	v, err := strconv.ParseInt(f.String(), 10, 32)
 	return int(v), err
 }
 
 // Int8 string to int8
-func (f StrTo) Int8() (int8, error) {
+func (f *StrTo) Int8() (int8, error) {
 	v, err := strconv.ParseInt(f.String(), 10, 8)
 	return int8(v), err
 }
 
 // Int16 string to int16
-func (f StrTo) Int16() (int16, error) {
+func (f *StrTo) Int16() (int16, error) {
 	v, err := strconv.ParseInt(f.String(), 10, 16)
 	return int16(v), err
 }
 
 // Int32 string to int32
-func (f StrTo) Int32() (int32, error) {
+func (f *StrTo) Int32() (int32, error) {
 	v, err := strconv.ParseInt(f.String(), 10, 32)
 	return int32(v), err
 }
 
 // Int64 string to int64
-func (f StrTo) Int64() (int64, error) {
+func (f *StrTo) Int64() (int64, error) {
 	v, err := strconv.ParseInt(f.String(), 10, 64)
 	if err != nil {
 		i := new(big.Int)
@@ -85,31 +85,31 @@ func (f StrTo) Int64() (int64, error) {
 }
 
 // Uint string to uint
-func (f StrTo) Uint() (uint, error) {
+func (f *StrTo) Uint() (uint, error) {
 	v, err := strconv.ParseUint(f.String(), 10, 32)
 	return uint(v), err
 }
 
 // Uint8 string to uint8
-func (f StrTo) Uint8() (uint8, error) {
+func (f *StrTo) Uint8() (uint8, error) {
 	v, err := strconv.ParseUint(f.String(), 10, 8)
 	return uint8(v), err
 }
 
 // Uint16 string to uint16
-func (f StrTo) Uint16() (uint16, error) {
+func (f *StrTo) Uint16() (uint16, error) {
 	v, err := strconv.ParseUint(f.String(), 10, 16)
 	return uint16(v), err
 }
 
 // Uint32 string to uint31
-func (f StrTo) Uint32() (uint32, error) {
+func (f *StrTo) Uint32() (uint32, error) {
 	v, err := strconv.ParseUint(f.String(), 10, 32)
 	return uint32(v), err
 }
 
 // Uint64 string to uint64
-func (f StrTo) Uint64() (uint64, error) {
+func (f *StrTo) Uint64() (uint64, error) {
 	v, err := strconv.ParseUint(f.String(), 10, 64)
 	if err != nil {
 		i := new(big.Int)
@@ -123,15 +123,14 @@ func (f StrTo) Uint64() (uint64, error) {
 }
 
 // String string to string
-func (f StrTo) String() string {
+func (f *StrTo) String() string {
 	if f.Exist() {
-		return string(f)
+		return string(*f)
 	}
 	return ""
 }
 
 // ToStr interface to string
-// nolint:gocyclo
 func ToStr(value interface{}, args ...int) (s string) {
 	switch v := value.(type) {
 	case bool:
@@ -225,16 +224,6 @@ func (a argInt) Get(i int, args ...int) (r int) {
 		r = args[0]
 	}
 	return
-}
-
-// get pointer indirect type
-func indirectType(v reflect.Type) reflect.Type {
-	switch v.Kind() {
-	case reflect.Ptr:
-		return indirectType(v.Elem())
-	default:
-		return v
-	}
 }
 
 // IsEmptyValue check the value is zero

@@ -69,7 +69,7 @@ func (mi *modelInfo) Read(ctx context.Context, db dbQueryer, ind reflect.Value, 
 		whereColumns = mi.getColumns(whereNames)
 		whereValues = mi.getValues(ind, whereNames)
 	} else {
-		// default use pk value as whereNames condtion.
+		// default use pk value as whereNames condition.
 		pkColumn, pkValue, ok := mi.getExistPk(ind)
 		if !ok {
 			return ErrMissPK
@@ -106,7 +106,7 @@ func (mi *modelInfo) Read(ctx context.Context, db dbQueryer, ind reflect.Value, 
 	dynColumns, containers := mi.getValueContainers(ind, mi.fields.dbcols, false)
 	err := db.QueryRowContext(ctx, query, args...).Scan(containers...)
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return ErrNoRows
 	case err != nil:
 		return err
@@ -204,7 +204,7 @@ func (mi *modelInfo) Delete(ctx context.Context, db dbQueryer, ind reflect.Value
 		whereColumns = mi.getColumns(whereNames)
 		whereValues = mi.getValues(ind, whereNames)
 	} else {
-		// default use pk value as where condtion.
+		// default use pk value as where condition.
 		pkColumn, pkValue, ok := mi.getExistPk(ind)
 		if !ok {
 			return 0, ErrMissPK
@@ -428,8 +428,9 @@ func (mi *modelInfo) ReadOne(ctx context.Context, db dbQueryer, qs *querySetter,
 	if err != nil {
 		return err
 	}
-	// nolint:errcheck
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		_ = rows.Close()
+	}(rows)
 
 	count := 0
 	if rows.Next() {
@@ -505,8 +506,9 @@ func (mi *modelInfo) ReadBatch(ctx context.Context, db dbQueryer, qs *querySette
 	if err != nil {
 		return err
 	}
-	// nolint:errcheck
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		_ = rows.Close()
+	}(rows)
 
 	slice := reflect.MakeSlice(ind.Type(), 0, 0)
 	for rows.Next() {

@@ -11,8 +11,7 @@ func MethodOnly(method string, h ContextHandler) ContextHandler {
 	f := func(ctx context.Context, w ResponseWriter, r *Request) {
 		if strings.ToUpper(r.Method) != method {
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			// nolint:errcheck
-			w.Write([]byte(http.StatusText(http.StatusMethodNotAllowed)))
+			_, _ = w.Write([]byte(http.StatusText(http.StatusMethodNotAllowed)))
 			return
 		}
 

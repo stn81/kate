@@ -67,10 +67,10 @@ func (args *Args) add(arg interface{}) int {
 //
 // The format string uses a special syntax to represent arguments.
 //
-//     $? refers successive arguments passed in the call. It works similar as `%v` in `fmt.Sprintf`.
-//     $0 $1 ... $n refers nth-argument passed in the call. Next $? will use arguments n+1.
-//     ${name} refers a named argument created by `Named` with `name`.
-//     $$ is a "$" string.
+//	$? refers successive arguments passed in the call. It works similar as `%v` in `fmt.Sprintf`.
+//	$0 $1 ... $n refers nth-argument passed in the call. Next $? will use arguments n+1.
+//	${name} refers a named argument created by `Named` with `name`.
+//	$$ is a "$" string.
 func (args *Args) Compile(format string, intialValue ...interface{}) (query string, values []interface{}) {
 	return args.CompileWithFlavor(format, args.Flavor, intialValue...)
 }
@@ -218,7 +218,7 @@ func (args *Args) compileArg(buf *bytes.Buffer, flavor Flavor, values []interfac
 		case MySQL:
 			buf.WriteRune('?')
 		case PostgreSQL:
-			fmt.Fprintf(buf, "$%v", len(values)+1)
+			_, _ = fmt.Fprintf(buf, "$%v", len(values)+1)
 		default:
 			panic(fmt.Errorf("Args.CompileWithFlavor: invalid flavor %v (%v)", flavor, int(flavor)))
 		}

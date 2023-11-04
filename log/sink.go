@@ -11,5 +11,5 @@ func NewSink(u *url.URL) (zap.Sink, error) {
 }
 
 func init() {
-	zap.RegisterSink("rfile", NewSink)
+	_ = zap.RegisterSink("rfile", NewSink)
 }

@@ -37,8 +37,8 @@ func TestBind(t *testing.T) {
 		"val_uints":  "1,2,3,4",
 	}
 
-	Bind(v, "query", data)
-	Bind(v, "rest", data)
+	_ = Bind(v, "query", data)
+	_ = Bind(v, "rest", data)
 	require.Equal(t, true, v.Bool, "bind bool")
 	require.Equal(t, int(10), v.Int, "bind int")
 	require.Equal(t, int8(10), v.Int8, "bind int8")

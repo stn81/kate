@@ -237,7 +237,7 @@ func (o *orm) Begin() error {
 	return o.BeginTx(nil)
 }
 
-// begin start a new transaction with tx options
+// BeginTx start a new transaction with tx options
 func (o *orm) BeginTx(opt *sql.TxOptions) error {
 	if o.isTx {
 		return ErrTxHasBegan
@@ -260,7 +260,7 @@ func (o *orm) BeginTx(opt *sql.TxOptions) error {
 	return nil
 }
 
-// commit transaction
+// Commit transaction
 func (o *orm) Commit() error {
 	if !o.isTx {
 		return ErrTxDone
@@ -268,13 +268,13 @@ func (o *orm) Commit() error {
 	err := o.db.(txEnder).Commit()
 	if err == nil {
 		o.isTx = false
-	} else if err == sql.ErrTxDone {
+	} else if errors.Is(err, sql.ErrTxDone) {
 		return ErrTxDone
 	}
 	return err
 }
 
-// rollback transaction
+// Rollback transaction
 func (o *orm) Rollback() error {
 	if !o.isTx {
 		return ErrTxDone
@@ -282,13 +282,13 @@ func (o *orm) Rollback() error {
 	err := o.db.(txEnder).Rollback()
 	if err == nil {
 		o.isTx = false
-	} else if err == sql.ErrTxDone {
+	} else if errors.Is(err, sql.ErrTxDone) {
 		return ErrTxDone
 	}
 	return err
 }
 
-// return a raw query seter for raw sql string.
+// Raw return a raw query seter for raw sql string.
 func (o *orm) Raw(query string, args ...interface{}) RawQueryer {
 	if o.db == nil {
 		o.Using("default")
@@ -299,8 +299,7 @@ func (o *orm) Raw(query string, args ...interface{}) RawQueryer {
 // RollbackIfNotCommitted as its name explains.
 func (o *orm) RollbackIfNotCommitted() {
 	if o.isTx {
-		// nolint:errcheck
-		o.Rollback()
+		_ = o.Rollback()
 	}
 }
 

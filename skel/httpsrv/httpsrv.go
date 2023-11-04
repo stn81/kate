@@ -2,6 +2,7 @@ package httpsrv
 
 import (
 	"context"
+	"errors"
 	"net"
 	"net/http"
 	"path"
@@ -97,7 +98,7 @@ func (s *httpService) serve() {
 
 	err := s.server.Serve(s.listener)
 	switch {
-	case err == http.ErrServerClosed:
+	case errors.Is(err, http.ErrServerClosed):
 	case err != nil:
 		s.logger.Fatal("failed to serve http service", zap.Error(err))
 	}

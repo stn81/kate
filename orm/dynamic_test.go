@@ -38,7 +38,7 @@ func (m *dynamicModel) NewDynamicField(name string) interface{} {
 
 func TestDynamic(t *testing.T) {
 	db := NewOrm(zap.NewExample())
-	db.QueryTable(new(dynamicModel)).Delete()
+	_, _ = db.QueryTable(new(dynamicModel)).Delete()
 
 	aObj := &dynamicModel{
 		Type: "A",

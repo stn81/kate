@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"cmp"
 	"errors"
 	"fmt"
 	"reflect"
@@ -17,29 +16,7 @@ func Abs(v int64) int64 {
 	return -v
 }
 
-// Min return the minimum value
-func Min[T cmp.Ordered](v ...T) T {
-	min := v[0]
-	for i := 1; i < len(v); i++ {
-		if v[i] < min {
-			min = v[i]
-		}
-	}
-	return min
-}
-
-// Max return the maximum value
-func Max[T cmp.Ordered](v ...T) T {
-	max := v[0]
-	for i := 1; i < len(v); i++ {
-		if v[i] > max {
-			max = v[i]
-		}
-	}
-	return max
-}
-
-// Split split the string.
+// Split the string.
 // if empty return an empty slice instead of nil
 func Split(str string, sep string) (r []string) {
 	p := strings.Split(str, sep)

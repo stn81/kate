@@ -3,6 +3,7 @@ package orm
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"reflect"
 )
@@ -117,7 +118,7 @@ func (rq *rawQueryer) Exec() (sql.Result, error) {
 func (rq *rawQueryer) QueryRow(containers ...interface{}) error {
 	err := rq.orm.db.QueryRowContext(rq.ctx, rq.query, rq.args...).Scan(containers...)
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return ErrNoRows
 	case err != nil:
 		return err
@@ -161,8 +162,9 @@ func (rq *rawQueryer) QueryRows(container interface{}) error {
 	if err != nil {
 		return err
 	}
-	// nolint:errcheck
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		_ = rows.Close()
+	}(rows)
 
 	var (
 		columns []string

@@ -15,8 +15,7 @@ func Recovery(h kate.ContextHandler) kate.ContextHandler {
 		defer func() {
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				// nolint:errcheck
-				w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+				_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
 				ctxzap.Extract(ctx).Error("got panic", zap.Any("error", err), zap.Stack("stack"))
 			}
 		}()

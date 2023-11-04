@@ -1,6 +1,7 @@
 package redsync
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
@@ -14,6 +15,7 @@ import (
 
 // Mutex is a distributed mutual exclusion lock.
 type Mutex struct {
+	ctx    context.Context
 	name   string
 	expiry time.Duration
 
@@ -28,7 +30,7 @@ type Mutex struct {
 	token string
 	until time.Time
 
-	nodem sync.Mutex
+	nodeMutex sync.Mutex
 
 	pools []Pool
 }
@@ -40,8 +42,8 @@ func (m *Mutex) GetToken() string {
 
 // Lock locks m. In case it returns an error on failure, you may retry to acquire the lock by calling this method again.
 func (m *Mutex) Lock() error {
-	m.nodem.Lock()
-	defer m.nodem.Unlock()
+	m.nodeMutex.Lock()
+	defer m.nodeMutex.Unlock()
 
 	if m.token == "" {
 		token, err := m.genToken()
@@ -79,8 +81,8 @@ func (m *Mutex) Lock() error {
 
 // Unlock unlocks m and returns the status of unlock. It is a run-time error if m is not locked on entry to Unlock.
 func (m *Mutex) Unlock() bool {
-	m.nodem.Lock()
-	defer m.nodem.Unlock()
+	m.nodeMutex.Lock()
+	defer m.nodeMutex.Unlock()
 
 	n := 0
 	for _, pool := range m.pools {
@@ -94,8 +96,8 @@ func (m *Mutex) Unlock() bool {
 
 // Extend resets the mutex's expiry and returns the status of expiry extension. It is a run-time error if m is not locked on entry to Extend.
 func (m *Mutex) Extend() bool {
-	m.nodem.Lock()
-	defer m.nodem.Unlock()
+	m.nodeMutex.Lock()
+	defer m.nodeMutex.Unlock()
 
 	n := 0
 	for _, pool := range m.pools {
@@ -125,16 +127,14 @@ func (m *Mutex) genToken() (string, error) {
 
 func (m *Mutex) getDelay() time.Duration {
 	var n int64
-	// nolint:errcheck
-	binary.Read(rand.Reader, binary.LittleEndian, &n)
+	_ = binary.Read(rand.Reader, binary.LittleEndian, &n)
 	n %= int64(m.delayMax - m.delayMin)
 	return time.Duration(n) + m.delayMin
 }
 
 func (m *Mutex) acquire(pool Pool, token string) bool {
 	client := pool.Get()
-	// nolint:errcheck
-	ok, err := client.SetNX(m.name, token, m.expiry).Result()
+	ok, err := client.SetNX(m.ctx, m.name, token, m.expiry).Result()
 	return err == nil && ok
 }
 
@@ -148,8 +148,7 @@ var deleteScript = redis.NewScript(`
 
 func (m *Mutex) release(pool Pool, token string) bool {
 	client := pool.Get()
-	// nolint:errcheck
-	result, err := deleteScript.Run(client, []string{m.name}, token).Int()
+	result, err := deleteScript.Run(m.ctx, client, []string{m.name}, token).Int()
 	return err == nil && result == 1
 }
 
@@ -168,7 +167,6 @@ var touchScript = redis.NewScript(`
 
 func (m *Mutex) touch(pool Pool, token string, expiry time.Duration) bool {
 	client := pool.Get()
-	// nolint:errcheck
-	result, err := touchScript.Run(client, []string{m.name}, token, int(expiry/time.Millisecond)).Int()
+	result, err := touchScript.Run(m.ctx, client, []string{m.name}, token, int(expiry/time.Millisecond)).Int()
 	return err == nil && result == 1
 }

@@ -11,7 +11,9 @@ func CountLine(fileName string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	buf := make([]byte, 32*1024)
 	count := 0

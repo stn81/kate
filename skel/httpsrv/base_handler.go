@@ -3,6 +3,7 @@ package httpsrv
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -15,8 +16,6 @@ import (
 )
 
 const (
-	// HeaderContentLength the header name of `Content-Length`
-	HeaderContentLength = "Content-Length"
 	// HeaderContentType the header name of `Content-Type`
 	HeaderContentType = "Content-Type"
 	// MIMEApplicationJSON the application type for json
@@ -29,7 +28,6 @@ const (
 type BaseHandler struct{}
 
 // ParseRequest parses and validates the api request
-// nolint:lll,gocyclo
 func (h *BaseHandler) ParseRequest(ctx context.Context, r *kate.Request, req interface{}) error {
 	logger := ctxzap.Extract(ctx)
 
@@ -84,7 +82,7 @@ func (h *BaseHandler) ParseRequest(ctx context.Context, r *kate.Request, req int
 }
 
 // Error writes out an error response
-func (h *BaseHandler) Error(ctx context.Context, w http.ResponseWriter, err interface{}) {
+func (h *BaseHandler) Error(ctx context.Context, w http.ResponseWriter, err error) {
 	Error(ctx, w, err)
 }
 
@@ -114,10 +112,14 @@ func (h *BaseHandler) parseBody(ptr interface{}, req *kate.Request) (err error) 
 	switch {
 	case strings.HasPrefix(ctype, MIMEApplicationJSON):
 		if err = utils.ParseJSON(req.RawBody, ptr); err != nil {
-			if ute, ok := err.(*json.UnmarshalTypeError); ok {
+			var (
+				ute *json.UnmarshalTypeError
+				se  *json.SyntaxError
+			)
+			if errors.As(err, &ute) {
 				return fmt.Errorf("unmarshal type error: expected=%v, got=%v, offset=%v",
 					ute.Type, ute.Value, ute.Offset)
-			} else if se, ok := err.(*json.SyntaxError); ok {
+			} else if errors.As(err, &se) {
 				return fmt.Errorf("syntax error: offset=%v, error=%v",
 					se.Offset, se.Error())
 			} else {

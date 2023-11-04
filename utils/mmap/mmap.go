@@ -1,7 +1,6 @@
 package mmap
 
 import (
-	"reflect"
 	"syscall"
 	"unsafe"
 )
@@ -24,25 +23,13 @@ func (m *Mmap) ToByteSlice() []byte {
 }
 
 func (m *Mmap) ToUint64Slice() []uint64 {
-	var u []uint64
-	dataHeader := (*reflect.SliceHeader)(unsafe.Pointer(&m.data))
-	uHeader := (*reflect.SliceHeader)(unsafe.Pointer(&u))
-	uHeader.Data = dataHeader.Data
-	uHeader.Len = m.size / 8
-	uHeader.Cap = m.size / 8
-	return u
+	return unsafe.Slice((*uint64)(unsafe.Pointer(unsafe.SliceData(m.data))), m.size/8)
 }
 
 func (m *Mmap) ToFloat32Slice() []float32 {
-	var f []float32
-	dataHeader := (*reflect.SliceHeader)(unsafe.Pointer(&m.data))
-	uHeader := (*reflect.SliceHeader)(unsafe.Pointer(&f))
-	uHeader.Data = dataHeader.Data
-	uHeader.Len = m.size / 4
-	uHeader.Cap = m.size / 4
-	return f
+	return unsafe.Slice((*float32)(unsafe.Pointer(unsafe.SliceData(m.data))), m.size/4)
 }
 
-func (m *Mmap) Close() {
-	syscall.Munmap(m.data)
+func (m *Mmap) Close() error {
+	return syscall.Munmap(m.data)
 }

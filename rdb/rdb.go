@@ -114,7 +114,6 @@ func newClusterClient(conf *Config) *redis.ClusterClient {
 // Uninit do the clean up for the global RedisConnectionManager instance
 func Uninit() {
 	if rdb != nil {
-		// nolint: errcheck
 		_ = rdb.Close()
 	}
 }

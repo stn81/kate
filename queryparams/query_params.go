@@ -122,13 +122,12 @@ func (p *QueryParams) Limit() int {
 	return p.perPage
 }
 
-// OrderBy return the order by exprs
+// OrderBy return the order by expression
 func (p *QueryParams) OrderBy() []string {
 	return p.orderBy
 }
 
 // String return the string representation
-// nolint:errcheck
 func (p *QueryParams) String() string {
 	buf := &bytes.Buffer{}
 

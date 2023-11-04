@@ -10,7 +10,6 @@ import (
 
 // GetBool convert interface to bool.
 func GetBool(v interface{}) bool {
-	// nolint:errcheck
 	b, _ := strconv.ParseBool(GetString(v))
 	return b
 }
@@ -41,7 +40,6 @@ func GetInt(v interface{}) int {
 		return int(result)
 	default:
 		if d := GetString(v); d != "" {
-			// nolint:errcheck
 			value, _ := strconv.Atoi(d)
 			return value
 		}
@@ -51,21 +49,18 @@ func GetInt(v interface{}) int {
 
 // GetInt8 convert interface to int8.
 func GetInt8(v interface{}) int8 {
-	// nolint:errcheck
 	s, _ := strconv.ParseInt(GetString(v), 10, 8)
 	return int8(s)
 }
 
 // GetInt16 convert interface to int16.
 func GetInt16(v interface{}) int16 {
-	// nolint:errcheck
 	s, _ := strconv.ParseInt(GetString(v), 10, 16)
 	return int16(s)
 }
 
 // GetInt32 convert interface to int32.
 func GetInt32(v interface{}) int32 {
-	// nolint:errcheck
 	s, _ := strconv.ParseInt(GetString(v), 10, 32)
 	return int32(s)
 }
@@ -81,7 +76,6 @@ func GetInt64(v interface{}) int64 {
 		return result
 	default:
 		if d := GetString(v); d != "" {
-			// nolint:errcheck
 			value, _ := strconv.ParseInt(d, 10, 64)
 			return value
 		}
@@ -91,28 +85,24 @@ func GetInt64(v interface{}) int64 {
 
 // GetUint convert interface to uint.
 func GetUint(v interface{}) uint {
-	// nolint:errcheck
 	s, _ := strconv.ParseUint(GetString(v), 10, 64)
 	return uint(s)
 }
 
 // GetUint8 convert interface to uint8.
 func GetUint8(v interface{}) uint8 {
-	// nolint:errcheck
 	s, _ := strconv.ParseUint(GetString(v), 10, 8)
 	return uint8(s)
 }
 
 // GetUint16 convert interface to uint16.
 func GetUint16(v interface{}) uint16 {
-	// nolint:errcheck
 	s, _ := strconv.ParseUint(GetString(v), 10, 16)
 	return uint16(s)
 }
 
 // GetUint32 convert interface to uint32.
 func GetUint32(v interface{}) uint32 {
-	// nolint:errcheck
 	s, _ := strconv.ParseUint(GetString(v), 10, 32)
 	return uint32(s)
 }
@@ -131,7 +121,6 @@ func GetUint64(v interface{}) uint64 {
 	default:
 
 		if d := GetString(v); d != "" {
-			// nolint:errcheck
 			value, _ := strconv.ParseUint(d, 10, 64)
 			return value
 		}
@@ -141,14 +130,12 @@ func GetUint64(v interface{}) uint64 {
 
 // GetFloat32 convert interface to float32.
 func GetFloat32(v interface{}) float32 {
-	// nolint:errcheck
 	f, _ := strconv.ParseFloat(GetString(v), 32)
 	return float32(f)
 }
 
 // GetFloat64 convert interface to float64.
 func GetFloat64(v interface{}) float64 {
-	// nolint:errcheck
 	f, _ := strconv.ParseFloat(GetString(v), 64)
 	return f
 }

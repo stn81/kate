@@ -63,7 +63,8 @@ func getExternalIP() (string, error) {
 
 // IsErrClosing return true if err indicates socket is closing
 func IsErrClosing(err error) bool {
-	if opErr, ok := err.(*net.OpError); ok {
+	var opErr *net.OpError
+	if errors.As(err, &opErr) {
 		err = opErr.Err
 	}
 	// nolint:stylecheck

@@ -36,7 +36,6 @@ func init() {
 
 // RandString return a random string of length n
 func RandString(n int, letterBytes string) string {
-	// nolint:errcheck
 	src := randSrcPool.Get().(rand.Source)
 	b := make([]byte, n)
 	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!

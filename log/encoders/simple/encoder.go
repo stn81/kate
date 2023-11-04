@@ -56,7 +56,9 @@ type encoder struct {
 //
 // Note that the encoder doesn't deduplicate keys, so it's possible to produce
 // a message like
-//   {"foo":"bar","foo":"baz"}
+//
+//	{"foo":"bar","foo":"baz"}
+//
 // This is permitted by the JSON specification, but not encouraged. Many
 // libraries will ignore duplicate key-value pairs (typically keeping the last
 // pair) when unmarshaling, but users should attempt to avoid adding duplicate
@@ -298,8 +300,7 @@ func (enc *encoder) AppendUintptr(v uintptr)            { enc.AppendUint64(uint6
 
 func (enc *encoder) Clone() zapcore.Encoder {
 	clone := enc.clone()
-	// nolint:errcheck
-	clone.buf.Write(enc.buf.Bytes())
+	_, _ = clone.buf.Write(enc.buf.Bytes())
 
 	return clone
 }
@@ -330,8 +331,7 @@ func (enc *encoder) EncodeEntry(ent zapcore.Entry, fields []zapcore.Field) (*buf
 	if enc.buf.Len() > 0 || len(fields) > 0 {
 		if enc.buf.Len() > 0 {
 			final.addElementSeparator()
-			// nolint:errcheck
-			final.buf.Write(enc.buf.Bytes())
+			_, _ = final.buf.Write(enc.buf.Bytes())
 		}
 
 		final.addFields(fields)
@@ -433,8 +433,7 @@ func (enc *encoder) safeAddByteString(s []byte) {
 			continue
 		}
 
-		// nolint:errcheck
-		enc.buf.Write(s[i : i+size])
+		_, _ = enc.buf.Write(s[i : i+size])
 		i += size
 	}
 }
@@ -489,8 +488,7 @@ func (enc *encoder) addFields(fields []zapcore.Field) {
 }
 
 func init() {
-	// nolint: errcheck
-	zap.RegisterEncoder("simple", func(config zapcore.EncoderConfig) (encoder zapcore.Encoder, e error) {
+	_ = zap.RegisterEncoder("simple", func(config zapcore.EncoderConfig) (encoder zapcore.Encoder, e error) {
 		return NewEncoder(), nil
 	})
 }

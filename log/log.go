@@ -17,7 +17,7 @@ func MustNewCoreWithLevelOnly(level zapcore.Level, location string, enc zapcore.
 		location = path.Join(app.GetHomeDir(), "log", location)
 	}
 
-	os.MkdirAll(path.Dir(location), 0755)
+	_ = os.MkdirAll(path.Dir(location), 0755)
 
 	writer, err := NewWriter(location)
 	if err != nil {
@@ -37,7 +37,7 @@ func MustNewCoreWithLevelAbove(level zapcore.Level, location string, enc zapcore
 		location = path.Join(app.GetHomeDir(), "log", location)
 	}
 
-	os.MkdirAll(path.Dir(location), 0755)
+	_ = os.MkdirAll(path.Dir(location), 0755)
 
 	writer, err := NewWriter(location)
 	if err != nil {

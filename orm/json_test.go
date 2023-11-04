@@ -46,7 +46,7 @@ func TestJSON(t *testing.T) {
 	//bRawContent := `{"type": "b", "content": {"items": [1,3,5]}}`
 
 	db := NewOrm(zap.NewExample())
-	db.QueryTable(new(jsonModel)).Delete()
+	_, _ = db.QueryTable(new(jsonModel)).Delete()
 
 	aObj := &jsonModel{
 		Content: jsonContent{
@@ -111,7 +111,7 @@ func (*mapJsonModel) TableName() string {
 
 func TestJSONMap(t *testing.T) {
 	db := NewOrm(zap.NewExample())
-	db.QueryTable(new(mapJsonModel)).Delete()
+	_, _ = db.QueryTable(new(mapJsonModel)).Delete()
 
 	content := map[string]interface{}{
 		"zhangsan": "1",

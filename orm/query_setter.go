@@ -217,7 +217,7 @@ func (qs *querySetter) Delete() (int64, error) {
 	return qs.mi.DeleteBatch(qs.orm.ctx, qs.orm.db, qs, qs.cond)
 }
 
-// return a insert queryer.
+// PrepareInsert return a insert queryer.
 // it can be used in times.
 // example:
 //

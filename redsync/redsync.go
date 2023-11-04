@@ -1,6 +1,7 @@
 package redsync
 
 import (
+	"context"
 	"time"
 )
 
@@ -21,8 +22,9 @@ func New(pools []Pool) *Redsync {
 }
 
 // NewMutex returns a new distributed mutex with given name.
-func (r *Redsync) NewMutex(name string, options ...Option) *Mutex {
+func (r *Redsync) NewMutex(ctx context.Context, name string, options ...Option) *Mutex {
 	m := &Mutex{
+		ctx:      ctx,
 		name:     name,
 		expiry:   8 * time.Second,
 		tries:    32,
@@ -39,8 +41,8 @@ func (r *Redsync) NewMutex(name string, options ...Option) *Mutex {
 }
 
 // NewMutex create a mutex using default redsync
-func NewMutex(name string, options ...Option) *Mutex {
-	return defaultRedsync.NewMutex(name, options...)
+func NewMutex(ctx context.Context, name string, options ...Option) *Mutex {
+	return defaultRedsync.NewMutex(ctx, name, options...)
 }
 
 // An Option configures a mutex.

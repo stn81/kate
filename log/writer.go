@@ -81,17 +81,17 @@ func (w *Writer) startRotateListener() {
 func (w *Writer) rotate() {
 	file, err := os.OpenFile(w.location, OpenFlag, OpenPerm)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: failed to rotate log file \"%s\", reopen, reason=%v", w.location, err)
+		_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to rotate log file \"%s\", reopen, reason=%v", w.location, err)
 		return
 	}
 
 	if err = syscall.Dup2(int(file.Fd()), int(w.file.Fd())); err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: failed to rotate log file \"%s\", dup2(), reason=%v", w.location, err)
+		_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to rotate log file \"%s\", dup2(), reason=%v", w.location, err)
 		return
 	}
 
 	if err = file.Close(); err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: failed to close log file \"%s\", close(), reason=%v", w.location, err)
+		_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to close log file \"%s\", close(), reason=%v", w.location, err)
 		return
 	}
 }

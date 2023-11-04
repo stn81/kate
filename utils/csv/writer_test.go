@@ -2,6 +2,7 @@ package csv
 
 import (
 	"context"
+	"go.uber.org/zap"
 	"os"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 
 func TestCSVWriter(t *testing.T) {
 	csvFileName := "./tests/writer.csv"
-	csvWriter, err := NewWriter(csvFileName)
+	csvWriter, err := NewWriter(csvFileName, zap.NewNop())
 	if err == nil {
 		defer func() {
 			_ = csvWriter.Close()

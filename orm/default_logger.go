@@ -30,5 +30,5 @@ func (*mysqlErrLogger) Print(v ...interface{}) {
 }
 
 func init() {
-	mysql.SetLogger(&mysqlErrLogger{})
+	_ = mysql.SetLogger(&mysqlErrLogger{})
 }
