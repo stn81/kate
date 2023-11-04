@@ -1,16 +1,14 @@
-package middleware
+package kate
 
 import (
 	"context"
-
-	"github.com/stn81/kate"
 	"github.com/stn81/kate/log/ctxzap"
 	"github.com/stn81/kate/traceid"
 	"go.uber.org/zap"
 )
 
-func TraceID(h kate.ContextHandler) kate.ContextHandler {
-	f := func(ctx context.Context, w kate.ResponseWriter, r *kate.Request) {
+func TraceID(h ContextHandler) ContextHandler {
+	f := func(ctx context.Context, w ResponseWriter, r *Request) {
 		var (
 			traceID = r.Header.Get("X-Trace-ID")
 			logger  = ctxzap.Extract(ctx)
@@ -25,5 +23,5 @@ func TraceID(h kate.ContextHandler) kate.ContextHandler {
 		ctx = ctxzap.ToContext(ctx, logger)
 		h.ServeHTTP(ctx, w, r)
 	}
-	return kate.ContextHandlerFunc(f)
+	return ContextHandlerFunc(f)
 }

@@ -2,7 +2,6 @@ package httpsrv
 
 import (
 	"context"
-
 	"github.com/stn81/kate"
 )
 

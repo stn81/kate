@@ -1,17 +1,16 @@
-package middleware
+package kate
 
 import (
 	"context"
 	"time"
 
-	"github.com/stn81/kate"
 	"go.uber.org/zap"
 )
 
 // Logging implements the request in/out logging middleware
 func Logging(logger *zap.Logger) Middleware {
-	mf := func(h kate.ContextHandler) kate.ContextHandler {
-		f := func(ctx context.Context, w kate.ResponseWriter, r *kate.Request) {
+	mf := func(h ContextHandler) ContextHandler {
+		f := func(ctx context.Context, w ResponseWriter, r *Request) {
 			start := time.Now()
 
 			logger.Info("request in",
@@ -27,7 +26,7 @@ func Logging(logger *zap.Logger) Middleware {
 				zap.String("body", string(w.RawBody())),
 				zap.Int64("duration_ms", int64(time.Since(start)/time.Millisecond)))
 		}
-		return kate.ContextHandlerFunc(f)
+		return ContextHandlerFunc(f)
 	}
 	return mf
 }

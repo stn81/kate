@@ -3,7 +3,6 @@ package httpsrv
 import (
 	"context"
 	"errors"
-	"github.com/stn81/kate/middleware"
 	"net"
 	"net/http"
 	"path"
@@ -58,10 +57,10 @@ func (s *httpService) start() {
 	s.initAccessLogger()
 
 	// 定义中间件栈，可根据需要在下面追加
-	c := middleware.NewChain(
-		middleware.TraceID,
-		middleware.Logging(s.accessLogger),
-		middleware.Recovery,
+	c := kate.NewChain(
+		kate.TraceID,
+		kate.Logging(s.accessLogger),
+		kate.Recovery,
 	)
 
 	// 注册Handler

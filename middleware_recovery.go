@@ -1,17 +1,16 @@
-package middleware
+package kate
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/stn81/kate"
 	"github.com/stn81/kate/log/ctxzap"
 	"go.uber.org/zap"
 )
 
 // Recovery implements the recovery wrapper middleware
-func Recovery(h kate.ContextHandler) kate.ContextHandler {
-	f := func(ctx context.Context, w kate.ResponseWriter, r *kate.Request) {
+func Recovery(h ContextHandler) ContextHandler {
+	f := func(ctx context.Context, w ResponseWriter, r *Request) {
 		defer func() {
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
@@ -22,5 +21,5 @@ func Recovery(h kate.ContextHandler) kate.ContextHandler {
 
 		h.ServeHTTP(ctx, w, r)
 	}
-	return kate.ContextHandlerFunc(f)
+	return ContextHandlerFunc(f)
 }
