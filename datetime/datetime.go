@@ -1,8 +1,9 @@
 package datetime
 
-import "time"
-
-type Value any
+import (
+	"database/sql/driver"
+	"time"
+)
 
 type DateTime struct {
 	time.Time
@@ -20,7 +21,7 @@ func (dt DateTime) String() string {
 	return dt.Time.Format(time.DateTime)
 }
 
-func (dt DateTime) Value() (Value, error) {
+func (dt DateTime) Value() (driver.Value, error) {
 	return dt.Time, nil
 }
 
@@ -40,6 +41,6 @@ func (dt Date) String() string {
 	return dt.Time.Format(time.DateOnly)
 }
 
-func (dt Date) Value() (Value, error) {
+func (dt Date) Value() (driver.Value, error) {
 	return dt.Time, nil
 }
