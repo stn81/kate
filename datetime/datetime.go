@@ -14,6 +14,10 @@ func (dt *DateTime) UnmarshalBind(value string) error {
 	return nil
 }
 
+func (dt *DateTime) String() string {
+	return dt.Time.Format(time.DateTime)
+}
+
 type Date struct {
 	time.Time
 }
@@ -24,4 +28,8 @@ func (dt *Date) UnmarshalBind(value string) error {
 		return err
 	}
 	return nil
+}
+
+func (dt *Date) String() string {
+	return dt.Time.Format(time.DateOnly)
 }
