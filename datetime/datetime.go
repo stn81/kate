@@ -16,11 +16,11 @@ func (dt *DateTime) UnmarshalBind(value string) error {
 	return nil
 }
 
-func (dt *DateTime) String() string {
+func (dt DateTime) String() string {
 	return dt.Time.Format(time.DateTime)
 }
 
-func (dt *DateTime) Value() (Value, error) {
+func (dt DateTime) Value() (Value, error) {
 	return dt.Time, nil
 }
 
@@ -36,10 +36,10 @@ func (dt *Date) UnmarshalBind(value string) error {
 	return nil
 }
 
-func (dt *Date) String() string {
+func (dt Date) String() string {
 	return dt.Time.Format(time.DateOnly)
 }
 
-func (dt *Date) Value() (Value, error) {
+func (dt Date) Value() (Value, error) {
 	return dt.Time, nil
 }
