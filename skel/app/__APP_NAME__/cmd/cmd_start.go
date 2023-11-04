@@ -97,12 +97,12 @@ func startCmdFunc(_ *cobra.Command, _ []string) {
 func initLogger() *zap.Logger {
 	enc := simple.NewEncoder()
 	core := zapcore.NewTee(
-		log.MustNewCoreWithLevelAbove(zapcore.DebugLevel, path.Join(config.Main.LogDir, "model_plat.all.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.DebugLevel, path.Join(config.Main.LogDir, "model_plat.debug.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.InfoLevel, path.Join(config.Main.LogDir, "model_plat.info.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.WarnLevel, path.Join(config.Main.LogDir, "model_plat.warn.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.ErrorLevel, path.Join(config.Main.LogDir, "model_plat.error.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.FatalLevel, path.Join(config.Main.LogDir, "model_plat.fatal.log"), enc),
+		log.MustNewCoreWithLevelAbove(zapcore.DebugLevel, path.Join(config.Main.LogDir, "__APP_NAME__.all.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.DebugLevel, path.Join(config.Main.LogDir, "__APP_NAME__.debug.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.InfoLevel, path.Join(config.Main.LogDir, "__APP_NAME__.info.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.WarnLevel, path.Join(config.Main.LogDir, "__APP_NAME__.warn.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.ErrorLevel, path.Join(config.Main.LogDir, "__APP_NAME__.error.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.FatalLevel, path.Join(config.Main.LogDir, "__APP_NAME__.fatal.log"), enc),
 	)
 
 	opts := []zap.Option{
