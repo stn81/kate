@@ -2,6 +2,8 @@ package datetime
 
 import "time"
 
+type Value any
+
 type DateTime struct {
 	time.Time
 }
@@ -18,6 +20,10 @@ func (dt *DateTime) String() string {
 	return dt.Time.Format(time.DateTime)
 }
 
+func (dt *DateTime) Value() (Value, error) {
+	return dt.Time, nil
+}
+
 type Date struct {
 	time.Time
 }
@@ -32,4 +38,8 @@ func (dt *Date) UnmarshalBind(value string) error {
 
 func (dt *Date) String() string {
 	return dt.Time.Format(time.DateOnly)
+}
+
+func (dt *Date) Value() (Value, error) {
+	return dt.Time, nil
 }
