@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stn81/kate/app"
 	"github.com/spf13/cobra"
+	"github.com/stn81/kate/app"
 
 	"__PACKAGE_NAME__/app/__APP_NAME__/cmd"
 )

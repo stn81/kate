@@ -33,18 +33,18 @@ func TestEscape(t *testing.T) {
 }
 
 func TestFlatten(t *testing.T) {
-	cases := [][2]interface{}{
+	cases := [][2]any{
 		{
 			"foo",
-			[]interface{}{"foo"},
+			[]any{"foo"},
 		},
 		{
 			[]int{1, 2, 3},
-			[]interface{}{1, 2, 3},
+			[]any{1, 2, 3},
 		},
 		{
-			[]interface{}{"abc", []int{1, 2, 3}, [3]string{"def", "ghi"}},
-			[]interface{}{"abc", 1, 2, 3, "def", "ghi", ""},
+			[]any{"abc", []int{1, 2, 3}, [3]string{"def", "ghi"}},
+			[]any{"abc", 1, 2, 3, "def", "ghi", ""},
 		},
 	}
 

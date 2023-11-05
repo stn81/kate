@@ -10,7 +10,7 @@ import (
 
 // QueryParams for pagination
 type QueryParams struct {
-	filters map[string]interface{}
+	filters map[string]any
 	orderBy []string
 	page    int
 	perPage int
@@ -25,13 +25,13 @@ var queryRequiredFields = map[string]reflect.Type{
 // NewQueryParams return a QueryParams
 func NewQueryParams() *QueryParams {
 	p := &QueryParams{
-		filters: make(map[string]interface{}),
+		filters: make(map[string]any),
 	}
 	return p
 }
 
 // NewQueryParamsFromTag create QueryParams from struct
-func NewQueryParamsFromTag(ptr interface{}) *QueryParams {
+func NewQueryParamsFromTag(ptr any) *QueryParams {
 	params := NewQueryParams()
 
 	val := reflect.ValueOf(ptr)
@@ -92,12 +92,12 @@ func NewQueryParamsFromTag(ptr interface{}) *QueryParams {
 }
 
 // GetFilters return the filters map
-func (p *QueryParams) GetFilters() map[string]interface{} {
+func (p *QueryParams) GetFilters() map[string]any {
 	return p.filters
 }
 
 // SetFilter add a filter condition
-func (p *QueryParams) SetFilter(name string, value interface{}) {
+func (p *QueryParams) SetFilter(name string, value any) {
 	p.filters[name] = value
 }
 

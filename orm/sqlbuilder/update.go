@@ -54,7 +54,7 @@ func (ub *UpdateBuilder) Where(andExpr ...string) *UpdateBuilder {
 }
 
 // Assign represents SET "field = value" in UPDATE.
-func (ub *UpdateBuilder) Assign(field string, value interface{}) string {
+func (ub *UpdateBuilder) Assign(field string, value any) string {
 	return fmt.Sprintf("%v = %v", Escape(field), ub.args.Add(value))
 }
 
@@ -71,25 +71,25 @@ func (ub *UpdateBuilder) Decr(field string) string {
 }
 
 // Add represents SET "field = field + value" in UPDATE.
-func (ub *UpdateBuilder) Add(field string, value interface{}) string {
+func (ub *UpdateBuilder) Add(field string, value any) string {
 	f := Escape(field)
 	return fmt.Sprintf("%v = %v + %v", f, f, ub.args.Add(value))
 }
 
 // Sub represents SET "field = field - value" in UPDATE.
-func (ub *UpdateBuilder) Sub(field string, value interface{}) string {
+func (ub *UpdateBuilder) Sub(field string, value any) string {
 	f := Escape(field)
 	return fmt.Sprintf("%v = %v - %v", f, f, ub.args.Add(value))
 }
 
 // Mul represents SET "field = field * value" in UPDATE.
-func (ub *UpdateBuilder) Mul(field string, value interface{}) string {
+func (ub *UpdateBuilder) Mul(field string, value any) string {
 	f := Escape(field)
 	return fmt.Sprintf("%v = %v * %v", f, f, ub.args.Add(value))
 }
 
 // Div represents SET "field = field / value" in UPDATE.
-func (ub *UpdateBuilder) Div(field string, value interface{}) string {
+func (ub *UpdateBuilder) Div(field string, value any) string {
 	f := Escape(field)
 	return fmt.Sprintf("%v = %v / %v", f, f, ub.args.Add(value))
 }
@@ -102,13 +102,13 @@ func (ub *UpdateBuilder) String() string {
 
 // Build returns compiled UPDATE string and args.
 // They can be used in `DB#Query` of package `database/sql` directly.
-func (ub *UpdateBuilder) Build() (sql string, args []interface{}) {
+func (ub *UpdateBuilder) Build() (sql string, args []any) {
 	return ub.BuildWithFlavor(ub.args.Flavor)
 }
 
 // BuildWithFlavor returns compiled UPDATE string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
-func (ub *UpdateBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
+func (ub *UpdateBuilder) BuildWithFlavor(flavor Flavor, initialArg ...any) (sql string, args []any) {
 	buf := &bytes.Buffer{}
 	buf.WriteString("UPDATE ")
 	buf.WriteString(ub.table)

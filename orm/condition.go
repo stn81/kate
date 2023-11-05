@@ -11,7 +11,7 @@ import (
 
 type condValue struct {
 	exprs  []string
-	args   []interface{}
+	args   []any
 	cond   *Condition
 	isOr   bool
 	isNot  bool
@@ -30,7 +30,7 @@ func NewCondition() *Condition {
 }
 
 // And add expression to condition
-func (c Condition) And(expr string, args ...interface{}) *Condition {
+func (c Condition) And(expr string, args ...any) *Condition {
 	if expr == "" || len(args) == 0 {
 		panic(fmt.Errorf("<Condition.And> args cannot empty"))
 	}
@@ -39,7 +39,7 @@ func (c Condition) And(expr string, args ...interface{}) *Condition {
 }
 
 // AndNot add NOT expression to condition
-func (c Condition) AndNot(expr string, args ...interface{}) *Condition {
+func (c Condition) AndNot(expr string, args ...any) *Condition {
 	if expr == "" || len(args) == 0 {
 		panic(fmt.Errorf("<Condition.AndNot> args cannot empty"))
 	}
@@ -73,7 +73,7 @@ func (c *Condition) AndNotCond(cond *Condition) *Condition {
 }
 
 // Or add OR expression to condition
-func (c Condition) Or(expr string, args ...interface{}) *Condition {
+func (c Condition) Or(expr string, args ...any) *Condition {
 	if expr == "" || len(args) == 0 {
 		panic(fmt.Errorf("<Condition.Or> args cannot empty"))
 	}
@@ -82,7 +82,7 @@ func (c Condition) Or(expr string, args ...interface{}) *Condition {
 }
 
 // OrNot add OR NOT expression to condition
-func (c Condition) OrNot(expr string, args ...interface{}) *Condition {
+func (c Condition) OrNot(expr string, args ...any) *Condition {
 	if expr == "" || len(args) == 0 {
 		panic(fmt.Errorf("<Condition.OrNot> args cannot empty"))
 	}
@@ -160,7 +160,7 @@ func (c *Condition) GetWhereSQL(mi *modelInfo, cond *sqlbuilder.Cond) string {
 }
 
 // nolint:gocyclo
-func (c *Condition) getOperatorSQL(column, operator string, args []interface{}, cond *sqlbuilder.Cond) string {
+func (c *Condition) getOperatorSQL(column, operator string, args []any, cond *sqlbuilder.Cond) string {
 	if len(args) == 0 {
 		panic(fmt.Errorf("operator `%s` need at least one args", operator))
 	}
@@ -275,7 +275,7 @@ func (c *Condition) getOperatorSQL(column, operator string, args []interface{}, 
 	return sql
 }
 
-func (c Condition) flatArgs(arg interface{}) []interface{} {
+func (c Condition) flatArgs(arg any) []any {
 	val := reflect.ValueOf(arg)
 	kind := val.Kind()
 	if kind == reflect.Ptr {
@@ -285,18 +285,18 @@ func (c Condition) flatArgs(arg interface{}) []interface{} {
 	}
 
 	if kind != reflect.Slice && kind != reflect.Array {
-		return []interface{}{arg}
+		return []any{arg}
 	}
 
 	if _, isBytes := arg.([]byte); isBytes {
-		return []interface{}{arg}
+		return []any{arg}
 	}
 
-	args := make([]interface{}, 0, val.Len())
+	args := make([]any, 0, val.Len())
 	for i := 0; i < val.Len(); i++ {
 		v := val.Index(i)
 
-		var vu interface{}
+		var vu any
 		if v.CanInterface() {
 			vu = v.Interface()
 		}

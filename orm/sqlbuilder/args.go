@@ -17,18 +17,18 @@ type Args struct {
 	// The default flavor used by `Args#Compile`
 	Flavor Flavor
 
-	args         []interface{}
+	args         []any
 	namedArgs    map[string]int
 	sqlNamedArgs map[string]int
 	onlyNamed    bool
 }
 
 // Add adds an arg to Args and returns a placeholder.
-func (args *Args) Add(arg interface{}) string {
+func (args *Args) Add(arg any) string {
 	return fmt.Sprintf("$%v", args.add(arg))
 }
 
-func (args *Args) add(arg interface{}) int {
+func (args *Args) add(arg any) int {
 	idx := len(args.args)
 
 	switch a := arg.(type) {
@@ -71,7 +71,7 @@ func (args *Args) add(arg interface{}) int {
 //	$0 $1 ... $n refers nth-argument passed in the call. Next $? will use arguments n+1.
 //	${name} refers a named argument created by `Named` with `name`.
 //	$$ is a "$" string.
-func (args *Args) Compile(format string, intialValue ...interface{}) (query string, values []interface{}) {
+func (args *Args) Compile(format string, intialValue ...any) (query string, values []any) {
 	return args.CompileWithFlavor(format, args.Flavor, intialValue...)
 }
 
@@ -79,7 +79,7 @@ func (args *Args) Compile(format string, intialValue ...interface{}) (query stri
 //
 // See doc for `Compile` to learn details.
 // nolint:gocyclo,lll
-func (args *Args) CompileWithFlavor(format string, flavor Flavor, intialValue ...interface{}) (query string, values []interface{}) {
+func (args *Args) CompileWithFlavor(format string, flavor Flavor, intialValue ...any) (query string, values []any) {
 	buf := &bytes.Buffer{}
 	idx := strings.IndexRune(format, '$')
 	offset := 0
@@ -140,7 +140,7 @@ func (args *Args) CompileWithFlavor(format string, flavor Flavor, intialValue ..
 }
 
 // nolint:lll
-func (args *Args) compileNamed(buf *bytes.Buffer, flavor Flavor, format string, values []interface{}) (string, []interface{}) {
+func (args *Args) compileNamed(buf *bytes.Buffer, flavor Flavor, format string, values []any) (string, []any) {
 	i := 1
 
 	for ; i < len(format) && format[i] != '}'; i++ {
@@ -163,7 +163,7 @@ func (args *Args) compileNamed(buf *bytes.Buffer, flavor Flavor, format string, 
 }
 
 // nolint:lll
-func (args *Args) compileDigits(buf *bytes.Buffer, flavor Flavor, format string, values []interface{}, offset int) (string, []interface{}, int) {
+func (args *Args) compileDigits(buf *bytes.Buffer, flavor Flavor, format string, values []any, offset int) (string, []any, int) {
 	i := 1
 
 	for ; i < len(format) && '0' <= format[i] && format[i] <= '9'; i++ {
@@ -181,7 +181,7 @@ func (args *Args) compileDigits(buf *bytes.Buffer, flavor Flavor, format string,
 }
 
 func (args *Args) compileSuccessive(buf *bytes.Buffer, flavor Flavor,
-	format string, values []interface{}, offset int) (string, []interface{}, int) {
+	format string, values []any, offset int) (string, []any, int) {
 	if offset >= len(args.args) {
 		return format, values, offset
 	}
@@ -193,7 +193,7 @@ func (args *Args) compileSuccessive(buf *bytes.Buffer, flavor Flavor,
 }
 
 // nolint:gocyclo
-func (args *Args) compileArg(buf *bytes.Buffer, flavor Flavor, values []interface{}, arg interface{}) []interface{} {
+func (args *Args) compileArg(buf *bytes.Buffer, flavor Flavor, values []any, arg any) []any {
 	switch a := arg.(type) {
 	case Builder:
 		var s string

@@ -30,28 +30,28 @@ type Ormer interface {
 	//	this will find User by UserName field
 	// 	u = &User{UserName: "astaxie", Password: "pass"}
 	//	err = Ormer.Read(u, "UserName")
-	Read(md interface{}, cols ...string) error
+	Read(md any, cols ...string) error
 	// ReadForUpdate Like Read(), but with "FOR UPDATE" clause, useful in transaction.
 	// Some databases are not support this feature.
-	ReadForUpdate(md interface{}, cols ...string) error
+	ReadForUpdate(md any, cols ...string) error
 	// Insert model data to database
 	// for example:
 	//  user := new(User)
 	//  id, err = Ormer.Insert(user)
 	//  user must a pointer and Insert will set user's pk field
-	Insert(interface{}) (int64, error)
+	Insert(any) (int64, error)
 	// InsertMulti insert some models to database
-	InsertMulti(bulk int, mds interface{}) (int64, error)
+	InsertMulti(bulk int, mds any) (int64, error)
 	// Update model to database.
 	// cols set the columns those want to update.
 	// find model by Id(pk) field and update columns specified by fields, if cols is null then update all columns
-	Update(md interface{}, cols ...string) (int64, error)
+	Update(md any, cols ...string) (int64, error)
 	// Delete delete model in database
-	Delete(md interface{}, cols ...string) (int64, error)
+	Delete(md any, cols ...string) (int64, error)
 	// QueryTable return a QuerySeter for table operations.
 	// table name can be string or struct.
 	// e.g. QueryTable(&user{}) or QueryTable((*User)(nil)),
-	QueryTable(ptrStruct interface{}) QuerySetter
+	QueryTable(ptrStruct any) QuerySetter
 	// Using switch to another registered database driver by given name.
 	Using(name string)
 	// Begin begin transaction
@@ -69,7 +69,7 @@ type Ormer interface {
 	// for example:
 	//	 ormer.Raw("UPDATE `user` SET `user_name` = ? WHERE `user_name` = ?", "slene", "testing").Exec()
 	//	// update user testing's name to slene
-	Raw(query string, args ...interface{}) RawQueryer
+	Raw(query string, args ...any) RawQueryer
 	// RollbackIfNotCommitted as its name explains.
 	RollbackIfNotCommitted()
 }
@@ -84,7 +84,7 @@ type orm struct {
 }
 
 // get model info and model reflect value
-func (o *orm) getMiInd(md interface{}, needPtr bool) (mi *modelInfo, ind reflect.Value) {
+func (o *orm) getMiInd(md any, needPtr bool) (mi *modelInfo, ind reflect.Value) {
 	val := reflect.ValueOf(md)
 	ind = reflect.Indirect(val)
 	typ := ind.Type()
@@ -100,7 +100,7 @@ func (o *orm) getMiInd(md interface{}, needPtr bool) (mi *modelInfo, ind reflect
 	return mi, ind
 }
 
-func (o *orm) ReadFromMaster(md interface{}, cols ...string) error {
+func (o *orm) ReadFromMaster(md any, cols ...string) error {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
 		o.Using(mi.db)
@@ -109,7 +109,7 @@ func (o *orm) ReadFromMaster(md interface{}, cols ...string) error {
 }
 
 // read data to model
-func (o *orm) Read(md interface{}, cols ...string) error {
+func (o *orm) Read(md any, cols ...string) error {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
 		o.Using(mi.db)
@@ -118,7 +118,7 @@ func (o *orm) Read(md interface{}, cols ...string) error {
 }
 
 // ReadForUpdate read data to model, like Read(), but use "SELECT FOR UPDATE" form
-func (o *orm) ReadForUpdate(md interface{}, cols ...string) error {
+func (o *orm) ReadForUpdate(md any, cols ...string) error {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
 		o.Using(mi.db)
@@ -127,7 +127,7 @@ func (o *orm) ReadForUpdate(md interface{}, cols ...string) error {
 }
 
 // Insert model data to database
-func (o *orm) Insert(md interface{}) (int64, error) {
+func (o *orm) Insert(md any) (int64, error) {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
 		o.Using(mi.db)
@@ -143,7 +143,7 @@ func (o *orm) Insert(md interface{}) (int64, error) {
 }
 
 // InsertMulti insert some models to database
-func (o *orm) InsertMulti(bulk int, mds interface{}) (int64, error) {
+func (o *orm) InsertMulti(bulk int, mds any) (int64, error) {
 	sind := reflect.Indirect(reflect.ValueOf(mds))
 
 	switch sind.Kind() {
@@ -171,7 +171,7 @@ func (o *orm) InsertMulti(bulk int, mds interface{}) (int64, error) {
 
 // Update model to database.
 // cols set the columns those want to update.
-func (o *orm) Update(md interface{}, cols ...string) (int64, error) {
+func (o *orm) Update(md any, cols ...string) (int64, error) {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
 		o.Using(mi.db)
@@ -181,7 +181,7 @@ func (o *orm) Update(md interface{}, cols ...string) (int64, error) {
 
 // Delete model in database
 // cols shows the delete conditions values read from. default is pk
-func (o *orm) Delete(md interface{}, cols ...string) (int64, error) {
+func (o *orm) Delete(md any, cols ...string) (int64, error) {
 	mi, ind := o.getMiInd(md, true)
 	if !o.isTx && o.db == nil {
 		o.Using(mi.db)
@@ -189,7 +189,7 @@ func (o *orm) Delete(md interface{}, cols ...string) (int64, error) {
 	return mi.Delete(o.ctx, o.db, ind, cols)
 }
 
-func (o *orm) QueryTable(ptrStruct interface{}) QuerySetter {
+func (o *orm) QueryTable(ptrStruct any) QuerySetter {
 	typ := reflect.TypeOf(ptrStruct)
 	if typ.Kind() != reflect.Ptr {
 		panic(fmt.Errorf("<Ormer.QueryTable> must be struct ptr, but got %v", typ))
@@ -289,7 +289,7 @@ func (o *orm) Rollback() error {
 }
 
 // Raw return a raw query seter for raw sql string.
-func (o *orm) Raw(query string, args ...interface{}) RawQueryer {
+func (o *orm) Raw(query string, args ...any) RawQueryer {
 	if o.db == nil {
 		o.Using("default")
 	}

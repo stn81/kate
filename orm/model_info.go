@@ -18,7 +18,7 @@ type modelInfo struct {
 	fullName  string
 	db        string
 	table     string
-	model     interface{}
+	model     any
 	fields    *fields
 	sharded   bool
 	addrField reflect.Value //store the original struct value
@@ -50,7 +50,7 @@ func (mi *modelInfo) setAutoField(ind reflect.Value, id int64) {
 }
 
 // getExistPk return the pk's column and value, and check if has a valid value.
-func (mi *modelInfo) getExistPk(ind reflect.Value) (column string, value interface{}, exist bool) {
+func (mi *modelInfo) getExistPk(ind reflect.Value) (column string, value any, exist bool) {
 	fi := mi.fields.pk
 	v := ind.FieldByIndex(fi.fieldIndex)
 	return fi.column, v.Interface(), v.IsValid()
@@ -164,8 +164,8 @@ func (mi *modelInfo) getColumns(anyNames []string) []string {
 	return names
 }
 
-func (mi *modelInfo) getValues(ind reflect.Value, anyNames []string) []interface{} {
-	values := make([]interface{}, len(anyNames))
+func (mi *modelInfo) getValues(ind reflect.Value, anyNames []string) []any {
+	values := make([]any, len(anyNames))
 	for i, anyName := range anyNames {
 		fi, ok := mi.fields.GetByAny(anyName)
 		if !ok {
@@ -183,9 +183,9 @@ func (mi *modelInfo) getValues(ind reflect.Value, anyNames []string) []interface
 }
 
 // getValueContainers return a containers slice used for row.Scan(containers...)
-func (mi *modelInfo) getValueContainers(ind reflect.Value, columns []string, ignoreUnknown bool) ([]string, []interface{}) {
+func (mi *modelInfo) getValueContainers(ind reflect.Value, columns []string, ignoreUnknown bool) ([]string, []any) {
 	var dynColumns []string
-	containers := make([]interface{}, len(columns))
+	containers := make([]any, len(columns))
 	for i, column := range columns {
 		fi, ok := mi.fields.GetByAny(column)
 		if !ok {

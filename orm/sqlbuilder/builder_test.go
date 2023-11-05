@@ -42,7 +42,7 @@ func ExampleBuild() {
 
 func ExampleBuildNamed() {
 	b := BuildNamed("SELECT * FROM ${table} WHERE status IN (${status}) AND name LIKE ${name} AND created_at > ${time} AND modified_at < ${time} + 86400",
-		map[string]interface{}{
+		map[string]any{
 			"time":   sql.Named("start", 1234567890),
 			"status": List([]int{1, 2, 5}),
 			"name":   "Huan%",
@@ -91,7 +91,7 @@ func TestBuildWithPostgreSQL(t *testing.T) {
 		t.Fatalf("invalid stmt. [expected:%v] [actual:%v]", expected, stmt)
 	}
 
-	if expected := []interface{}{7890, 1234, 2, 4567, 5}; !reflect.DeepEqual(args, expected) {
+	if expected := []any{7890, 1234, 2, 4567, 5}; !reflect.DeepEqual(args, expected) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 
@@ -107,7 +107,7 @@ func TestBuildWithPostgreSQL(t *testing.T) {
 		t.Fatalf("invalid stmt. [expected:%v] [actual:%v]", expected, stmt)
 	}
 
-	if expected := []interface{}{7890, 1234, 2, 4567, 5}; !reflect.DeepEqual(args, expected) {
+	if expected := []any{7890, 1234, 2, 4567, 5}; !reflect.DeepEqual(args, expected) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 }

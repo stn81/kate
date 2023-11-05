@@ -59,7 +59,7 @@ func TestStructUpdate(t *testing.T) {
 		t.Fatalf("invalid SQL. [expected:%v] [actual:%v]", expected, sql)
 	}
 
-	if expected := []interface{}{123, "Huan Du", 2, 1234567890}; !reflect.DeepEqual(expected, args) {
+	if expected := []any{123, "Huan Du", 2, 1234567890}; !reflect.DeepEqual(expected, args) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 }
@@ -78,7 +78,7 @@ func TestStructUpdateForTag(t *testing.T) {
 		t.Fatalf("invalid SQL. [expected:%v] [actual:%v]", expected, sql)
 	}
 
-	if expected := []interface{}{123, "Huan Du", 2}; !reflect.DeepEqual(expected, args) {
+	if expected := []any{123, "Huan Du", 2}; !reflect.DeepEqual(expected, args) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 }
@@ -97,7 +97,7 @@ func TestStructInsertInto(t *testing.T) {
 		t.Fatalf("invalid SQL. [expected:%v] [actual:%v]", expected, sql)
 	}
 
-	if expected := []interface{}{123, "Huan Du", 2, 1234567890}; !reflect.DeepEqual(expected, args) {
+	if expected := []any{123, "Huan Du", 2, 1234567890}; !reflect.DeepEqual(expected, args) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 
@@ -112,7 +112,7 @@ func TestStructInsertInto(t *testing.T) {
 		ID int
 	}{789}
 
-	users := []interface{}{user, user2, &fakeUser}
+	users := []any{user, user2, &fakeUser}
 	ib = userForTest.InsertInto("user", users...)
 	sql, args = ib.Build()
 
@@ -120,7 +120,7 @@ func TestStructInsertInto(t *testing.T) {
 		t.Fatalf("invalid SQL. [expected:%v] [actual:%v]", expected, sql)
 	}
 
-	if expected := []interface{}{123, "Huan Du", 2, 1234567890, 456, "Du Huan", 2, 1234567890}; !reflect.DeepEqual(expected, args) {
+	if expected := []any{123, "Huan Du", 2, 1234567890, 456, "Du Huan", 2, 1234567890}; !reflect.DeepEqual(expected, args) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 }
@@ -139,7 +139,7 @@ func TestStructInsertIntoForTag(t *testing.T) {
 		t.Fatalf("invalid SQL. [expected:%v] [actual:%v]", expected, sql)
 	}
 
-	if expected := []interface{}{123, "Huan Du", 2}; !reflect.DeepEqual(expected, args) {
+	if expected := []any{123, "Huan Du", 2}; !reflect.DeepEqual(expected, args) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 
@@ -154,7 +154,7 @@ func TestStructInsertIntoForTag(t *testing.T) {
 		ID int
 	}{789}
 
-	users := []interface{}{user, user2, &fakeUser}
+	users := []any{user, user2, &fakeUser}
 	ib = userForTest.InsertIntoForTag("user", "important", users...)
 	sql, args = ib.Build()
 
@@ -162,7 +162,7 @@ func TestStructInsertIntoForTag(t *testing.T) {
 		t.Fatalf("invalid SQL. [expected:%v] [actual:%v]", expected, sql)
 	}
 
-	if expected := []interface{}{123, "Huan Du", 2, 456, "Du Huan", 2}; !reflect.DeepEqual(expected, args) {
+	if expected := []any{123, "Huan Du", 2, 456, "Du Huan", 2}; !reflect.DeepEqual(expected, args) {
 		t.Fatalf("invalid args. [expected:%v] [actual:%v]", expected, args)
 	}
 
@@ -253,11 +253,11 @@ type State int
 type testDB int
 type testRows int
 
-func (db testDB) Query(query string, args ...interface{}) (testRows, error) {
+func (db testDB) Query(query string, args ...any) (testRows, error) {
 	return 0, nil
 }
 
-func (db testDB) Exec(query string, args ...interface{}) {
+func (db testDB) Exec(query string, args ...any) {
 	return
 }
 
@@ -265,7 +265,7 @@ func (rows testRows) Close() error {
 	return nil
 }
 
-func (rows testRows) Scan(dest ...interface{}) error {
+func (rows testRows) Scan(dest ...any) error {
 	_, _ = fmt.Sscan("1234 huandu 1", dest...)
 	return nil
 }

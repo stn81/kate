@@ -41,7 +41,7 @@ type Struct struct {
 // NewStruct analyzes type information in structValue
 // and creates a new Struct with all structValue fields.
 // If structValue is not a struct, NewStruct returns a dummy Sturct.
-func NewStruct(structValue interface{}) *Struct {
+func NewStruct(structValue any) *Struct {
 	t := reflect.TypeOf(structValue)
 	t = dereferencedType(t)
 	s := &Struct{
@@ -155,7 +155,7 @@ func (s *Struct) SelectFromForTag(table string, tag string) *SelectBuilder {
 // If value's type is not the same as that of s, Update returns a dummy `UpdateBuilder` with table name.
 //
 // Caller is responsible to set WHERE condition to match right record.
-func (s *Struct) Update(table string, value interface{}) *UpdateBuilder {
+func (s *Struct) Update(table string, value any) *UpdateBuilder {
 	return s.UpdateForTag(table, "", value)
 }
 
@@ -164,7 +164,7 @@ func (s *Struct) Update(table string, value interface{}) *UpdateBuilder {
 // If value's type is not the same as that of s, UpdateForTag returns a dummy `UpdateBuilder` with table name.
 //
 // Caller is responsible to set WHERE condition to match right record.
-func (s *Struct) UpdateForTag(table string, tag string, value interface{}) *UpdateBuilder {
+func (s *Struct) UpdateForTag(table string, tag string, value any) *UpdateBuilder {
 	ub := s.Flavor.NewUpdateBuilder()
 	ub.Update(table)
 
@@ -201,7 +201,7 @@ func (s *Struct) UpdateForTag(table string, tag string, value interface{}) *Upda
 // By default, all exported fields of the s is inserted in INSERT with the field values from value.
 // Bulk insert is supported. Item in value that is not the same as that of s will be skipped.
 // If no item in value is valid, InsertInto returns a dummy `InsertBuilder` with table name.
-func (s *Struct) InsertInto(table string, value ...interface{}) *InsertBuilder {
+func (s *Struct) InsertInto(table string, value ...any) *InsertBuilder {
 	return s.InsertIntoForTag(table, "", value...)
 }
 
@@ -209,7 +209,7 @@ func (s *Struct) InsertInto(table string, value ...interface{}) *InsertBuilder {
 // By default, all fields of the s tagged with tag is inserted in INSERT with the field values from value.
 // Bulk insert is supported. Item in value that is not the same as that of s will be skipped.
 // If no item in value is valid, InsertIntoForTag returns a dummy `InsertBuilder` with table name.
-func (s *Struct) InsertIntoForTag(table string, tag string, value ...interface{}) *InsertBuilder {
+func (s *Struct) InsertIntoForTag(table string, tag string, value ...any) *InsertBuilder {
 	ib := s.Flavor.NewInsertBuilder()
 	ib.InsertInto(table)
 
@@ -236,7 +236,7 @@ func (s *Struct) InsertIntoForTag(table string, tag string, value ...interface{}
 	}
 
 	cols := make([]string, 0, len(fields))
-	values := make([][]interface{}, len(vs))
+	values := make([][]any, len(vs))
 
 	for _, f := range fields {
 		cols = append(cols, f)
@@ -268,7 +268,7 @@ func (s *Struct) DeleteFrom(table string) *DeleteBuilder {
 
 // Addr takes address of all exported fields of the s from the value.
 // The returned result can be used in `Row#Scan` directly.
-func (s *Struct) Addr(value interface{}) []interface{} {
+func (s *Struct) Addr(value any) []any {
 	return s.AddrForTag("", value)
 }
 
@@ -276,7 +276,7 @@ func (s *Struct) Addr(value interface{}) []interface{} {
 // The returned result can be used in `Row#Scan` directly.
 //
 // If tag is not defined in s in advance,
-func (s *Struct) AddrForTag(tag string, value interface{}) []interface{} {
+func (s *Struct) AddrForTag(tag string, value any) []any {
 	fields, ok := s.taggedFields[tag]
 
 	if !ok {
@@ -288,7 +288,7 @@ func (s *Struct) AddrForTag(tag string, value interface{}) []interface{} {
 
 // AddrWithCols takes address of all columns defined in cols from the value.
 // The returned result can be used in `Row#Scan` directly.
-func (s *Struct) AddrWithCols(cols []string, value interface{}) []interface{} {
+func (s *Struct) AddrWithCols(cols []string, value any) []any {
 	v := dereferencedValue(value)
 
 	if v.Type() != s.structType {
@@ -301,7 +301,7 @@ func (s *Struct) AddrWithCols(cols []string, value interface{}) []interface{} {
 		}
 	}
 
-	addrs := make([]interface{}, 0, len(cols))
+	addrs := make([]any, 0, len(cols))
 
 	for _, c := range cols {
 		name := s.fieldAlias[c]
@@ -352,7 +352,7 @@ func dereferencedType(t reflect.Type) reflect.Type {
 	return t
 }
 
-func dereferencedValue(value interface{}) reflect.Value {
+func dereferencedValue(value any) reflect.Value {
 	v := reflect.ValueOf(value)
 
 	for k := v.Kind(); k == reflect.Ptr || k == reflect.Interface; k = v.Kind() {

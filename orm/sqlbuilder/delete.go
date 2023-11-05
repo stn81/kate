@@ -53,13 +53,13 @@ func (db *DeleteBuilder) String() string {
 
 // Build returns compiled DELETE string and args.
 // They can be used in `DB#Query` of package `database/sql` directly.
-func (db *DeleteBuilder) Build() (sql string, args []interface{}) {
+func (db *DeleteBuilder) Build() (sql string, args []any) {
 	return db.BuildWithFlavor(db.args.Flavor)
 }
 
 // BuildWithFlavor returns compiled DELETE string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
-func (db *DeleteBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
+func (db *DeleteBuilder) BuildWithFlavor(flavor Flavor, initialArg ...any) (sql string, args []any) {
 	buf := &bytes.Buffer{}
 	buf.WriteString("DELETE FROM ")
 	buf.WriteString(db.table)

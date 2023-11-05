@@ -6,7 +6,7 @@ import (
 )
 
 // SetDefaults set the default value by tag `default:"value"`
-func SetDefaults(ptr interface{}) error {
+func SetDefaults(ptr any) error {
 	val := reflect.ValueOf(ptr)
 	ind := reflect.Indirect(val)
 	typ := ind.Type()

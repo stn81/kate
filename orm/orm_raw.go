@@ -11,9 +11,9 @@ import (
 // RawStmtQueryer statement querier
 type RawStmtQueryer interface {
 	Close() error
-	Exec(args ...interface{}) (sql.Result, error)
-	Query(args ...interface{}) (*sql.Rows, error)
-	QueryRow(args ...interface{}) *sql.Row
+	Exec(args ...any) (sql.Result, error)
+	Query(args ...any) (*sql.Rows, error)
+	QueryRow(args ...any) *sql.Row
 }
 
 // RawQueryer raw query seter
@@ -27,13 +27,13 @@ type RawQueryer interface {
 	Exec() (sql.Result, error)
 
 	// QueryRow query data and map to container
-	QueryRow(containers ...interface{}) error
+	QueryRow(containers ...any) error
 
 	// QueryRows query data rows and map to container
-	QueryRows(container interface{}) error
+	QueryRows(container any) error
 
 	// SetArgs set args
-	SetArgs(...interface{}) RawQueryer
+	SetArgs(...any) RawQueryer
 
 	// Prepare return prepared raw statement for used in times.
 	// for example:
@@ -54,21 +54,21 @@ func (rs *rawStmt) Close() error {
 	return rs.stmt.Close()
 }
 
-func (rs *rawStmt) Exec(args ...interface{}) (sql.Result, error) {
+func (rs *rawStmt) Exec(args ...any) (sql.Result, error) {
 	if rs.closed {
 		panic(ErrStmtClosed)
 	}
 	return rs.stmt.ExecContext(rs.rq.ctx, args...)
 }
 
-func (rs *rawStmt) Query(args ...interface{}) (*sql.Rows, error) {
+func (rs *rawStmt) Query(args ...any) (*sql.Rows, error) {
 	if rs.closed {
 		panic(ErrStmtClosed)
 	}
 	return rs.stmt.QueryContext(rs.rq.ctx, args...)
 }
 
-func (rs *rawStmt) QueryRow(args ...interface{}) *sql.Row {
+func (rs *rawStmt) QueryRow(args ...any) *sql.Row {
 	if rs.closed {
 		panic(ErrStmtClosed)
 	}
@@ -96,7 +96,7 @@ func newRawStmt(rq *rawQueryer) (RawStmtQueryer, error) {
 // rawQueryer is the raw queryer
 type rawQueryer struct {
 	query string
-	args  []interface{}
+	args  []any
 	orm   *orm
 	ctx   context.Context
 }
@@ -104,7 +104,7 @@ type rawQueryer struct {
 var _ RawQueryer = new(rawQueryer)
 
 // SetArgs set args for every query
-func (rq rawQueryer) SetArgs(args ...interface{}) RawQueryer {
+func (rq rawQueryer) SetArgs(args ...any) RawQueryer {
 	rq.args = args
 	return &rq
 }
@@ -115,7 +115,7 @@ func (rq *rawQueryer) Exec() (sql.Result, error) {
 }
 
 // QueryRow query data and map to container
-func (rq *rawQueryer) QueryRow(containers ...interface{}) error {
+func (rq *rawQueryer) QueryRow(containers ...any) error {
 	err := rq.orm.db.QueryRowContext(rq.ctx, rq.query, rq.args...).Scan(containers...)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
@@ -129,7 +129,7 @@ func (rq *rawQueryer) QueryRow(containers ...interface{}) error {
 
 // QueryRows query data rows and map to container
 // nolint:gocyclo
-func (rq *rawQueryer) QueryRows(container interface{}) error {
+func (rq *rawQueryer) QueryRows(container any) error {
 	var (
 		val = reflect.ValueOf(container)
 		ind = reflect.Indirect(val)
@@ -212,7 +212,7 @@ func (rq *rawQueryer) Prepare() (RawStmtQueryer, error) {
 	return newRawStmt(rq)
 }
 
-func newRawQueryer(orm *orm, query string, args []interface{}) RawQueryer {
+func newRawQueryer(orm *orm, query string, args []any) RawQueryer {
 	q := new(rawQueryer)
 	q.query = query
 	q.args = args

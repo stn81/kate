@@ -22,7 +22,7 @@ var pid = os.Getpid()
 // For escaping; see encoder.safeAddString below.
 const _hex = "0123456789abcdef"
 
-var encoderPool = sync.Pool{New: func() interface{} {
+var encoderPool = sync.Pool{New: func() any {
 	return &encoder{}
 }}
 
@@ -129,7 +129,7 @@ var nullLiteralBytes = []byte("null")
 
 // Only invoke the standard JSON encoder if there is actually something to
 // encode; otherwise write JSON null literal directly.
-func (enc *encoder) encodeReflected(obj interface{}) ([]byte, error) {
+func (enc *encoder) encodeReflected(obj any) ([]byte, error) {
 	if obj == nil {
 		return nullLiteralBytes, nil
 	}
@@ -145,7 +145,7 @@ func (enc *encoder) encodeReflected(obj interface{}) ([]byte, error) {
 	return enc.reflectBuf.Bytes(), nil
 }
 
-func (enc *encoder) AddReflected(key string, obj interface{}) error {
+func (enc *encoder) AddReflected(key string, obj any) error {
 	valueBytes, err := enc.encodeReflected(obj)
 	if err != nil {
 		return err
@@ -239,7 +239,7 @@ func (enc *encoder) AppendInt64(val int64) {
 	enc.buf.AppendInt(val)
 }
 
-func (enc *encoder) AppendReflected(val interface{}) error {
+func (enc *encoder) AppendReflected(val any) error {
 	valueBytes, err := enc.encodeReflected(val)
 	if err != nil {
 		return err

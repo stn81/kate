@@ -131,7 +131,7 @@ func (f *StrTo) String() string {
 }
 
 // ToStr interface to string
-func ToStr(value interface{}, args ...int) (s string) {
+func ToStr(value any, args ...int) (s string) {
 	switch v := value.(type) {
 	case bool:
 		s = strconv.FormatBool(v)
@@ -170,7 +170,7 @@ func ToStr(value interface{}, args ...int) (s string) {
 }
 
 // ToInt64 interface to int64
-func ToInt64(value interface{}) (d int64) {
+func ToInt64(value any) (d int64) {
 	val := reflect.ValueOf(value)
 	switch value.(type) {
 	case int, int8, int16, int32, int64:

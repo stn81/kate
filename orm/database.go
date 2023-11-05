@@ -24,7 +24,7 @@ func getDB(name string) *database {
 }
 
 // RegisterDB Setting the database connect params. Use the database driver self dataSource args.
-func RegisterDB(dbName, driverName, dataSource string, params ...interface{}) {
+func RegisterDB(dbName, driverName, dataSource string, params ...any) {
 	db := new(database)
 	db.Name = dbName
 	db.DataSource = dataSource

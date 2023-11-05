@@ -38,7 +38,7 @@ func TestNewQueryParams(t *testing.T) {
 		PerPage:         perPage,
 	}
 
-	expectedFilters := map[string]interface{}{
+	expectedFilters := map[string]any{
 		"ID__in":          ids,
 		"Name__icontains": name,
 		"CreateTime__gte": createTimeBegin,

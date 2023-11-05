@@ -24,7 +24,7 @@ func SetDefaultLoggerTag(tag zap.Field) {
 
 type mysqlErrLogger struct{}
 
-func (*mysqlErrLogger) Print(v ...interface{}) {
+func (*mysqlErrLogger) Print(v ...any) {
 	msg := fmt.Sprint(v...)
 	defaultLogger.Error("mysql_driver_error", zap.String("error", msg))
 }

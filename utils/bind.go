@@ -7,7 +7,7 @@ import (
 )
 
 // FillStruct set the field value of ptr according data kv map.
-func FillStruct(ptr interface{}, data map[string]interface{}) {
+func FillStruct(ptr any, data map[string]any) {
 	err := Bind(ptr, "", data)
 	if err != nil {
 		panic(err)
@@ -17,7 +17,7 @@ func FillStruct(ptr interface{}, data map[string]interface{}) {
 var defaultStructFieldTag = "field"
 
 // FillStructByTag set the field value of struct s according
-func FillStructByTag(ptr interface{}, tag string, input map[string]interface{}) (filled []string, err error) {
+func FillStructByTag(ptr any, tag string, input map[string]any) (filled []string, err error) {
 	val := reflect.ValueOf(ptr)
 	ind := reflect.Indirect(val)
 	typ := ind.Type()
@@ -81,7 +81,7 @@ type BindUnmarshaler interface {
 }
 
 // Bind values to struct ptr
-func Bind(ptr interface{}, tag string, input map[string]interface{}) error {
+func Bind(ptr any, tag string, input map[string]any) error {
 	val := reflect.ValueOf(ptr)
 	ind := reflect.Indirect(val)
 	typ := ind.Type()
@@ -125,7 +125,7 @@ func Bind(ptr interface{}, tag string, input map[string]interface{}) error {
 	return nil
 }
 
-func bindSlice(field reflect.Value, value interface{}) error {
+func bindSlice(field reflect.Value, value any) error {
 	strValue, ok := value.(string)
 	if !ok {
 		field.Set(reflect.ValueOf(value))
@@ -166,7 +166,7 @@ func bindSlice(field reflect.Value, value interface{}) error {
 	return nil
 }
 
-func bindValuePtr(field reflect.Value, value interface{}) error {
+func bindValuePtr(field reflect.Value, value any) error {
 	vv := reflect.ValueOf(value)
 	if vv.Kind() == reflect.Ptr {
 		field.Set(vv)
@@ -185,7 +185,7 @@ func bindValuePtr(field reflect.Value, value interface{}) error {
 }
 
 // nolint:gocyclo
-func bindValue(field reflect.Value, value interface{}) error {
+func bindValue(field reflect.Value, value any) error {
 	ok, err := unmarshalBind(field, value)
 	if err != nil {
 		return err
@@ -218,7 +218,7 @@ func bindValue(field reflect.Value, value interface{}) error {
 	return nil
 }
 
-func unmarshalBind(field reflect.Value, value interface{}) (ok bool, err error) {
+func unmarshalBind(field reflect.Value, value any) (ok bool, err error) {
 	strValue, ok := value.(string)
 	if !ok {
 		return false, nil

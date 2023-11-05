@@ -28,7 +28,7 @@ type exampleVal struct {
 func TestBind(t *testing.T) {
 	v := &exampleVal{}
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"val_bool":   "true",
 		"val_int":    "10",
 		"val_uint":   "100",
@@ -66,7 +66,7 @@ type taggedStruct struct {
 
 func TestFillStructByTag(t *testing.T) {
 	createVal := &taggedStruct{}
-	createParams := map[string]interface{}{
+	createParams := map[string]any{
 		"ID":    100,
 		"Name":  "zhangsan",
 		"Value": "hello",
@@ -79,7 +79,7 @@ func TestFillStructByTag(t *testing.T) {
 	require.Equal(t, []string{"Name", "Value"}, filledByCreate)
 
 	updateVal := &taggedStruct{}
-	updateParams := map[string]interface{}{
+	updateParams := map[string]any{
 		"Name":  "lisi",
 		"Value": "world",
 	}

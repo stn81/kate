@@ -14,67 +14,67 @@ type Cond struct {
 }
 
 // Equal represents "field = value".
-func (c *Cond) Equal(field string, value interface{}) string {
+func (c *Cond) Equal(field string, value any) string {
 	return fmt.Sprintf("%v = %v", Escape(field), c.Args.Add(value))
 }
 
 // E is an alias of Equal.
-func (c *Cond) E(field string, value interface{}) string {
+func (c *Cond) E(field string, value any) string {
 	return c.Equal(field, value)
 }
 
 // NotEqual represents "field != value".
-func (c *Cond) NotEqual(field string, value interface{}) string {
+func (c *Cond) NotEqual(field string, value any) string {
 	return fmt.Sprintf("%v <> %v", Escape(field), c.Args.Add(value))
 }
 
 // NE is an alias of NotEqual.
-func (c *Cond) NE(field string, value interface{}) string {
+func (c *Cond) NE(field string, value any) string {
 	return c.NotEqual(field, value)
 }
 
 // GreaterThan represents "field > value".
-func (c *Cond) GreaterThan(field string, value interface{}) string {
+func (c *Cond) GreaterThan(field string, value any) string {
 	return fmt.Sprintf("%v > %v", Escape(field), c.Args.Add(value))
 }
 
 // G is an alias of GreaterThan.
-func (c *Cond) G(field string, value interface{}) string {
+func (c *Cond) G(field string, value any) string {
 	return c.GreaterThan(field, value)
 }
 
 // GreaterEqualThan represents "field >= value".
-func (c *Cond) GreaterEqualThan(field string, value interface{}) string {
+func (c *Cond) GreaterEqualThan(field string, value any) string {
 	return fmt.Sprintf("%v >= %v", Escape(field), c.Args.Add(value))
 }
 
 // GE is an alias of GreaterEqualThan.
-func (c *Cond) GE(field string, value interface{}) string {
+func (c *Cond) GE(field string, value any) string {
 	return c.GreaterEqualThan(field, value)
 }
 
 // LessThan represents "field < value".
-func (c *Cond) LessThan(field string, value interface{}) string {
+func (c *Cond) LessThan(field string, value any) string {
 	return fmt.Sprintf("%v < %v", Escape(field), c.Args.Add(value))
 }
 
 // L is an alias of LessThan.
-func (c *Cond) L(field string, value interface{}) string {
+func (c *Cond) L(field string, value any) string {
 	return c.LessThan(field, value)
 }
 
 // LessEqualThan represents "field <= value".
-func (c *Cond) LessEqualThan(field string, value interface{}) string {
+func (c *Cond) LessEqualThan(field string, value any) string {
 	return fmt.Sprintf("%v <= %v", Escape(field), c.Args.Add(value))
 }
 
 // LE is an alias of LessEqualThan.
-func (c *Cond) LE(field string, value interface{}) string {
+func (c *Cond) LE(field string, value any) string {
 	return c.LessEqualThan(field, value)
 }
 
 // In represents "field IN (value...)".
-func (c *Cond) In(field string, value ...interface{}) string {
+func (c *Cond) In(field string, value ...any) string {
 	vs := make([]string, 0, len(value))
 
 	for _, v := range value {
@@ -85,7 +85,7 @@ func (c *Cond) In(field string, value ...interface{}) string {
 }
 
 // NotIn represents "field NOT IN (value...)".
-func (c *Cond) NotIn(field string, value ...interface{}) string {
+func (c *Cond) NotIn(field string, value ...any) string {
 	vs := make([]string, 0, len(value))
 
 	for _, v := range value {
@@ -96,22 +96,22 @@ func (c *Cond) NotIn(field string, value ...interface{}) string {
 }
 
 // Like represents "field LIKE value".
-func (c *Cond) Like(field string, value interface{}) string {
+func (c *Cond) Like(field string, value any) string {
 	return fmt.Sprintf("%v LIKE %v", Escape(field), c.Args.Add(value))
 }
 
 // LikeBinary represents "field LIKE BINARY value".
-func (c *Cond) LikeBinary(field string, value interface{}) string {
+func (c *Cond) LikeBinary(field string, value any) string {
 	return fmt.Sprintf("%v LIKE BINARY %v", Escape(field), c.Args.Add(value))
 }
 
 // NotLike represents "field NOT LIKE value".
-func (c *Cond) NotLike(field string, value interface{}) string {
+func (c *Cond) NotLike(field string, value any) string {
 	return fmt.Sprintf("%v NOT LIKE %v", Escape(field), c.Args.Add(value))
 }
 
 // NotLikeBinary represents "field NOT LIKE BINARY value".
-func (c *Cond) NotLikeBinary(field string, value interface{}) string {
+func (c *Cond) NotLikeBinary(field string, value any) string {
 	return fmt.Sprintf("%v NOT LIKE BINARY %v", Escape(field), c.Args.Add(value))
 }
 
@@ -126,12 +126,12 @@ func (c *Cond) IsNotNull(field string) string {
 }
 
 // Between represents "field BETWEEN lower AND upper".
-func (c *Cond) Between(field string, lower, upper interface{}) string {
+func (c *Cond) Between(field string, lower, upper any) string {
 	return fmt.Sprintf("%v BETWEEN %v AND %v", Escape(field), c.Args.Add(lower), c.Args.Add(upper))
 }
 
 // NotBetween represents "field NOT BETWEEN lower AND upper".
-func (c *Cond) NotBetween(field string, lower, upper interface{}) string {
+func (c *Cond) NotBetween(field string, lower, upper any) string {
 	return fmt.Sprintf("%v NOT BETWEEN %v AND %v", Escape(field), c.Args.Add(lower), c.Args.Add(upper))
 }
 
@@ -146,6 +146,6 @@ func (c *Cond) And(andExpr ...string) string {
 }
 
 // Var returns a placeholder for value.
-func (c *Cond) Var(value interface{}) string {
+func (c *Cond) Var(value any) string {
 	return c.Args.Add(value)
 }

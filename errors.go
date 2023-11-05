@@ -17,7 +17,7 @@ var (
 )
 
 // ErrBadParam returns an instance of bad param ErrorInfo.
-func ErrBadParam(v interface{}) ErrorInfo {
+func ErrBadParam(v any) ErrorInfo {
 	var errMsg string
 	switch err := v.(type) {
 	case string:

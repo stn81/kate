@@ -7,7 +7,7 @@ import (
 )
 
 // ToJSON return json encoded string of interface.
-func ToJSON(v interface{}) string {
+func ToJSON(v any) string {
 	var (
 		data []byte
 		err  error
@@ -19,6 +19,6 @@ func ToJSON(v interface{}) string {
 }
 
 // ParseJSON parse json with dynamic field parse support
-func ParseJSON(data []byte, ptr interface{}) error {
+func ParseJSON(data []byte, ptr any) error {
 	return dynamic.ParseJSON(data, ptr)
 }

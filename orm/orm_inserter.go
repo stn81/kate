@@ -7,7 +7,7 @@ import (
 
 // Inserter insert prepared statement
 type Inserter interface {
-	Insert(interface{}) (int64, error)
+	Insert(any) (int64, error)
 	Close() error
 }
 
@@ -22,7 +22,7 @@ type preparedInserter struct {
 }
 
 // Insert model ignore it's registered or not.
-func (pi *preparedInserter) Insert(md interface{}) (int64, error) {
+func (pi *preparedInserter) Insert(md any) (int64, error) {
 	if pi.closed {
 		return 0, ErrStmtClosed
 	}

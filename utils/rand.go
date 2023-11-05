@@ -28,7 +28,7 @@ var randSrcPool *sync.Pool
 // nolint:gochecknoinits
 func init() {
 	randSrcPool = &sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return rand.NewSource(time.Now().UnixNano())
 		},
 	}

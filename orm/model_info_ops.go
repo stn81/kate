@@ -28,7 +28,7 @@ func (mi *modelInfo) PrepareInsert(ctx context.Context, db dbQueryer, tableSuffi
 	table := mi.getTableBySuffix(tableSuffix)
 	builder := sqlbuilder.NewInsertBuilder()
 
-	values := make([]interface{}, len(mi.fields.dbcols))
+	values := make([]any, len(mi.fields.dbcols))
 	for i := 0; i < len(values); i++ {
 		values[i] = nil
 	}
@@ -60,7 +60,7 @@ func (mi *modelInfo) Read(ctx context.Context, db dbQueryer, ind reflect.Value, 
 	forUpdate bool, forceMaster bool) error {
 	var (
 		whereColumns []string
-		whereValues  []interface{}
+		whereValues  []any
 		table        = mi.getTableByInd(ind)
 		logger       = ctxzap.Extract(ctx).With(defaultLoggerTag)
 	)
@@ -75,7 +75,7 @@ func (mi *modelInfo) Read(ctx context.Context, db dbQueryer, ind reflect.Value, 
 			return ErrMissPK
 		}
 		whereColumns = []string{pkColumn}
-		whereValues = []interface{}{pkValue}
+		whereValues = []any{pkValue}
 	}
 
 	builder := sqlbuilder.NewSelectBuilder()
@@ -90,7 +90,7 @@ func (mi *modelInfo) Read(ctx context.Context, db dbQueryer, ind reflect.Value, 
 
 	var (
 		query string
-		args  []interface{}
+		args  []any
 	)
 
 	if forceMaster {
@@ -194,7 +194,7 @@ func (mi *modelInfo) Update(ctx context.Context, db dbQueryer, ind reflect.Value
 func (mi *modelInfo) Delete(ctx context.Context, db dbQueryer, ind reflect.Value, whereNames []string) (int64, error) {
 	var (
 		whereColumns []string
-		whereValues  []interface{}
+		whereValues  []any
 		table        = mi.getTableByInd(ind)
 		logger       = ctxzap.Extract(ctx).With(defaultLoggerTag)
 	)
@@ -210,7 +210,7 @@ func (mi *modelInfo) Delete(ctx context.Context, db dbQueryer, ind reflect.Value
 			return 0, ErrMissPK
 		}
 		whereColumns = []string{pkColumn}
-		whereValues = []interface{}{pkValue}
+		whereValues = []any{pkValue}
 	}
 
 	if len(whereColumns) == 0 {
@@ -291,7 +291,7 @@ func (mi *modelInfo) UpdateBatch(ctx context.Context, db dbQueryer,
 	qs *querySetter, cond *Condition, params Params) (int64, error) {
 	var (
 		setNames  = make([]string, 0, len(params))
-		setValues = make([]interface{}, 0, len(params))
+		setValues = make([]any, 0, len(params))
 		logger    = ctxzap.Extract(ctx).With(defaultLoggerTag)
 	)
 
@@ -351,7 +351,7 @@ func (mi *modelInfo) DeleteBatch(ctx context.Context, db dbQueryer, qs *querySet
 }
 
 // nolint:gocyclo,lll
-func (mi *modelInfo) getQueryArgsForRead(qs *querySetter, cond *Condition, selectNames []string) (string, []interface{}) {
+func (mi *modelInfo) getQueryArgsForRead(qs *querySetter, cond *Condition, selectNames []string) (string, []any) {
 	var selectColumns []string
 	if len(selectNames) > 0 {
 		selectColumns = mi.getColumns(selectNames)
@@ -394,7 +394,7 @@ func (mi *modelInfo) getQueryArgsForRead(qs *querySetter, cond *Condition, selec
 
 	var (
 		query string
-		args  []interface{}
+		args  []any
 	)
 	if qs.forceMaster {
 		query, args = sqlbuilder.Build(HintRouterMaster, builder).Build()
@@ -405,7 +405,7 @@ func (mi *modelInfo) getQueryArgsForRead(qs *querySetter, cond *Condition, selec
 }
 
 // nolint:lll
-func (mi *modelInfo) ReadOne(ctx context.Context, db dbQueryer, qs *querySetter, cond *Condition, container interface{}, selectNames []string) error {
+func (mi *modelInfo) ReadOne(ctx context.Context, db dbQueryer, qs *querySetter, cond *Condition, container any, selectNames []string) error {
 	logger := ctxzap.Extract(ctx).With(defaultLoggerTag)
 	val := reflect.ValueOf(container)
 	ind := reflect.Indirect(val)
@@ -462,7 +462,7 @@ func (mi *modelInfo) ReadOne(ctx context.Context, db dbQueryer, qs *querySetter,
 }
 
 // nolint:gocyclo,lll
-func (mi *modelInfo) ReadBatch(ctx context.Context, db dbQueryer, qs *querySetter, cond *Condition, container interface{}, selectNames []string) error {
+func (mi *modelInfo) ReadBatch(ctx context.Context, db dbQueryer, qs *querySetter, cond *Condition, container any, selectNames []string) error {
 	logger := ctxzap.Extract(ctx).With(defaultLoggerTag)
 	val := reflect.ValueOf(container)
 	ind := reflect.Indirect(val)
@@ -562,7 +562,7 @@ func (mi *modelInfo) Count(ctx context.Context, db dbQueryer, qs *querySetter, c
 }
 
 // getEqualWhereExprs return where exprs used in sqlbuilder.Cond
-func getEqualWhereExprs(cond *sqlbuilder.Cond, columns []string, values []interface{}) []string {
+func getEqualWhereExprs(cond *sqlbuilder.Cond, columns []string, values []any) []string {
 	whereExprs := make([]string, len(columns))
 	for i := range columns {
 		whereExprs[i] = cond.E(columns[i], values[i])
@@ -571,7 +571,7 @@ func getEqualWhereExprs(cond *sqlbuilder.Cond, columns []string, values []interf
 }
 
 // getAssignments return set exprs used in sqlbuilder.UpdateBuilder
-func getAssignments(ub *sqlbuilder.UpdateBuilder, columns []string, values []interface{}) []string {
+func getAssignments(ub *sqlbuilder.UpdateBuilder, columns []string, values []any) []string {
 	assignments := make([]string, len(columns))
 	for i := range columns {
 		switch v := values[i].(type) {

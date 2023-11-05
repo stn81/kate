@@ -16,7 +16,7 @@ func debugLogQueies(
 	query string,
 	t time.Time,
 	err error,
-	args ...interface{},
+	args ...any,
 ) {
 	var (
 		elapsed = int64(time.Since(t) / time.Millisecond)
@@ -57,21 +57,21 @@ func (d *stmtQueryLog) Close() error {
 	return err
 }
 
-func (d *stmtQueryLog) ExecContext(ctx context.Context, args ...interface{}) (sql.Result, error) {
+func (d *stmtQueryLog) ExecContext(ctx context.Context, args ...any) (sql.Result, error) {
 	a := time.Now()
 	res, err := d.stmt.ExecContext(ctx, args...)
 	debugLogQueies(ctx, d.dbName, "stmt.ExecContext", d.query, a, err, args...)
 	return res, err
 }
 
-func (d *stmtQueryLog) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows, error) {
+func (d *stmtQueryLog) QueryContext(ctx context.Context, args ...any) (*sql.Rows, error) {
 	a := time.Now()
 	res, err := d.stmt.QueryContext(ctx, args...)
 	debugLogQueies(ctx, d.dbName, "stmt.QueryContext", d.query, a, err, args...)
 	return res, err
 }
 
-func (d *stmtQueryLog) QueryRowContext(ctx context.Context, args ...interface{}) *sql.Row {
+func (d *stmtQueryLog) QueryRowContext(ctx context.Context, args ...any) *sql.Row {
 	a := time.Now()
 	res := d.stmt.QueryRowContext(ctx, args...)
 	debugLogQueies(ctx, d.dbName, "stmt.QueryRowContext", d.query, a, nil, args...)
@@ -106,21 +106,21 @@ func (d *dbQueryLog) PrepareContext(ctx context.Context, query string) (*sql.Stm
 	return stmt, err
 }
 
-func (d *dbQueryLog) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+func (d *dbQueryLog) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	a := time.Now()
 	res, err := d.db.ExecContext(ctx, query, args...)
 	debugLogQueies(ctx, d.dbName, "db.ExecContext", query, a, err, args...)
 	return res, err
 }
 
-func (d *dbQueryLog) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
+func (d *dbQueryLog) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 	a := time.Now()
 	res, err := d.db.QueryContext(ctx, query, args...)
 	debugLogQueies(ctx, d.dbName, "db.QueryContext", query, a, err, args...)
 	return res, err
 }
 
-func (d *dbQueryLog) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
+func (d *dbQueryLog) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
 	a := time.Now()
 	res := d.db.QueryRowContext(ctx, query, args...)
 	debugLogQueies(ctx, d.dbName, "db.QueryRowContext", query, a, nil, args...)

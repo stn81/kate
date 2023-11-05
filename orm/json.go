@@ -11,11 +11,11 @@ import (
 
 // JSONValue is the json wrapper
 type JSONValue struct {
-	addr      interface{}
+	addr      any
 	omitEmpty bool
 }
 
-func newJSONValue(v interface{}, omitEmpty bool) interface{} {
+func newJSONValue(v any, omitEmpty bool) any {
 	return &JSONValue{
 		addr:      v,
 		omitEmpty: omitEmpty,
@@ -42,7 +42,7 @@ func (jv *JSONValue) Value() (driver.Value, error) {
 }
 
 // Scan implements sql.Scanner interface
-func (jv *JSONValue) Scan(value interface{}) error {
+func (jv *JSONValue) Scan(value any) error {
 	switch rawVal := value.(type) {
 	case string:
 		if len(rawVal) == 0 {

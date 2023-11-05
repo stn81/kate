@@ -83,7 +83,8 @@ func (sb *SelectBuilder) From(table ...string) *SelectBuilder {
 // Join sets expressions of JOIN in SELECT.
 //
 // It builds a JOIN expression like
-//     JOIN table ON onExpr[0] AND onExpr[1] ...
+//
+//	JOIN table ON onExpr[0] AND onExpr[1] ...
 func (sb *SelectBuilder) Join(table string, onExpr ...string) *SelectBuilder {
 	return sb.JoinWithOption("", table, onExpr...)
 }
@@ -91,13 +92,14 @@ func (sb *SelectBuilder) Join(table string, onExpr ...string) *SelectBuilder {
 // JoinWithOption sets expressions of JOIN with an option.
 //
 // It builds a JOIN expression like
-//     option JOIN table ON onExpr[0] AND onExpr[1] ...
+//
+//	option JOIN table ON onExpr[0] AND onExpr[1] ...
 //
 // Here is a list of supported options.
-//     - LeftJoin: LEFT JOIN
-//     - LeftOuterJoin: LEFT OUTER JOIN
-//     - RightJoin: RIGHT JOIN
-//     - RightOuterJoin: RIGHT OUTER JOIN
+//   - LeftJoin: LEFT JOIN
+//   - LeftOuterJoin: LEFT OUTER JOIN
+//   - RightJoin: RIGHT JOIN
+//   - RightOuterJoin: RIGHT OUTER JOIN
 func (sb *SelectBuilder) JoinWithOption(option JoinOption, table string, onExpr ...string) *SelectBuilder {
 	sb.joinOptions = append(sb.joinOptions, option)
 	sb.joinTables = append(sb.joinTables, table)
@@ -178,14 +180,14 @@ func (sb *SelectBuilder) String() string {
 
 // Build returns compiled SELECT string and args.
 // They can be used in `DB#Query` of package `database/sql` directly.
-func (sb *SelectBuilder) Build() (sql string, args []interface{}) {
+func (sb *SelectBuilder) Build() (sql string, args []any) {
 	return sb.BuildWithFlavor(sb.args.Flavor)
 }
 
 // BuildWithFlavor returns compiled SELECT string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 // nolint:gocyclo
-func (sb *SelectBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
+func (sb *SelectBuilder) BuildWithFlavor(flavor Flavor, initialArg ...any) (sql string, args []any) {
 	buf := &bytes.Buffer{}
 	buf.WriteString("SELECT ")
 

@@ -21,7 +21,7 @@ type jsonContent struct {
 	Data *dynamic.Type `json:"data"`
 }
 
-func (c *jsonContent) NewDynamicField(name string) interface{} {
+func (c *jsonContent) NewDynamicField(name string) any {
 	switch c.Type {
 	case "a":
 		return new(aData)
@@ -101,8 +101,8 @@ func TestJSON(t *testing.T) {
 }
 
 type mapJsonModel struct {
-	ID      int64                  `json:"id" orm:"pk;column(id)"`
-	Content map[string]interface{} `json:"content" orm:"column(content);json"`
+	ID      int64          `json:"id" orm:"pk;column(id)"`
+	Content map[string]any `json:"content" orm:"column(content);json"`
 }
 
 func (*mapJsonModel) TableName() string {
@@ -113,7 +113,7 @@ func TestJSONMap(t *testing.T) {
 	db := NewOrm(zap.NewExample())
 	_, _ = db.QueryTable(new(mapJsonModel)).Delete()
 
-	content := map[string]interface{}{
+	content := map[string]any{
 		"zhangsan": "1",
 		"lisi":     "200",
 	}

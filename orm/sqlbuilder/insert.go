@@ -43,7 +43,7 @@ func (ib *InsertBuilder) Cols(col ...string) *InsertBuilder {
 }
 
 // Values adds a list of values for a row in INSERT.
-func (ib *InsertBuilder) Values(value ...interface{}) *InsertBuilder {
+func (ib *InsertBuilder) Values(value ...any) *InsertBuilder {
 	placeholders := make([]string, 0, len(value))
 
 	for _, v := range value {
@@ -62,13 +62,13 @@ func (ib *InsertBuilder) String() string {
 
 // Build returns compiled INSERT string and args.
 // They can be used in `DB#Query` of package `database/sql` directly.
-func (ib *InsertBuilder) Build() (sql string, args []interface{}) {
+func (ib *InsertBuilder) Build() (sql string, args []any) {
 	return ib.BuildWithFlavor(ib.args.Flavor)
 }
 
 // BuildWithFlavor returns compiled INSERT string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
-func (ib *InsertBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
+func (ib *InsertBuilder) BuildWithFlavor(flavor Flavor, initialArg ...any) (sql string, args []any) {
 	buf := &bytes.Buffer{}
 	buf.WriteString("INSERT INTO ")
 	buf.WriteString(ib.table)

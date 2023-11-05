@@ -26,7 +26,7 @@ func (m *dynamicModel) TableName() string {
 	return "dynamic_test"
 }
 
-func (m *dynamicModel) NewDynamicField(name string) interface{} {
+func (m *dynamicModel) NewDynamicField(name string) any {
 	switch m.Type {
 	case "A":
 		return new(aDynContent)

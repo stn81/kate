@@ -27,7 +27,7 @@ const (
 type BaseHandler struct{}
 
 // ParseRequest parses and validates the api request
-func (h *BaseHandler) ParseRequest(ctx context.Context, r *Request, req interface{}) error {
+func (h *BaseHandler) ParseRequest(ctx context.Context, r *Request, req any) error {
 	logger := ctxzap.Extract(ctx)
 
 	// decode json
@@ -41,7 +41,7 @@ func (h *BaseHandler) ParseRequest(ctx context.Context, r *Request, req interfac
 	// decode query
 	queryValues := r.URL.Query()
 	if len(queryValues) > 0 {
-		data := make(map[string]interface{})
+		data := make(map[string]any)
 		for key := range queryValues {
 			if value := queryValues.Get(key); len(value) > 0 {
 				data[key] = value
@@ -56,7 +56,7 @@ func (h *BaseHandler) ParseRequest(ctx context.Context, r *Request, req interfac
 
 	// decode rest var
 	if len(r.RestVars) > 0 {
-		data := make(map[string]interface{})
+		data := make(map[string]any)
 		for i := range r.RestVars {
 			data[r.RestVars[i].Key] = r.RestVars[i].Value
 		}
@@ -108,7 +108,7 @@ func (h *BaseHandler) OK(ctx context.Context, w http.ResponseWriter) {
 }
 
 // OKData writes out a success response with data, used typically in an `get` api.
-func (h *BaseHandler) OKData(ctx context.Context, w http.ResponseWriter, data interface{}) {
+func (h *BaseHandler) OKData(ctx context.Context, w http.ResponseWriter, data any) {
 	result := &Result{
 		ErrNO:  ErrSuccess.Code(),
 		ErrMsg: ErrSuccess.Error(),
@@ -121,12 +121,12 @@ func (h *BaseHandler) OKData(ctx context.Context, w http.ResponseWriter, data in
 }
 
 // EncodeJSON is a wrapper of json.Marshal()
-func (h *BaseHandler) EncodeJSON(v interface{}) ([]byte, error) {
+func (h *BaseHandler) EncodeJSON(v any) ([]byte, error) {
 	return json.Marshal(v)
 }
 
 // WriteJSON writes out an object which is serialized as json.
-func (h *BaseHandler) WriteJSON(w http.ResponseWriter, v interface{}) error {
+func (h *BaseHandler) WriteJSON(w http.ResponseWriter, v any) error {
 	b, err := h.EncodeJSON(v)
 	if err != nil {
 		return err
@@ -139,7 +139,7 @@ func (h *BaseHandler) WriteJSON(w http.ResponseWriter, v interface{}) error {
 }
 
 // parseBody 从http request 中解出json body，必须是 application/json
-func (h *BaseHandler) parseBody(ptr interface{}, req *Request) (err error) {
+func (h *BaseHandler) parseBody(ptr any, req *Request) (err error) {
 	ctype := req.Header.Get(HeaderContentType)
 	switch {
 	case strings.HasPrefix(ctype, MIMEApplicationJSON):

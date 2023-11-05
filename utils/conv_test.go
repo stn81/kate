@@ -13,7 +13,7 @@ type A struct {
 
 func BenchmarkFillStruct(b *testing.B) {
 	a := &A{}
-	m := map[string]interface{}{
+	m := map[string]any{
 		"name":     "zhangsan",
 		"AgeValue": "99",
 	}

@@ -18,7 +18,7 @@ const (
 // Client is the client interface for redis db
 type Client interface {
 	redis.Cmdable
-	Do(context context.Context, args ...interface{}) *redis.Cmd
+	Do(context context.Context, args ...any) *redis.Cmd
 	Process(context context.Context, cmd redis.Cmder) error
 	Close() error
 }

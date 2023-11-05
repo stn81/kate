@@ -31,17 +31,17 @@ func (e *errSimple) Error() string {
 type ErrorInfoWithData interface {
 	error
 	Code() int
-	Data() interface{}
+	Data() any
 }
 
 // errWithData defines a basic error type with extra data which implements ErrorInfoWithData interface
 type errWithData struct {
 	*errSimple
-	ErrData interface{}
+	ErrData any
 }
 
 // NewErrorWithData create a errWithData instance
-func NewErrorWithData(code int, message string, data interface{}) ErrorInfoWithData {
+func NewErrorWithData(code int, message string, data any) ErrorInfoWithData {
 	return &errWithData{
 		errSimple: &errSimple{code, message},
 		ErrData:   data,
@@ -49,6 +49,6 @@ func NewErrorWithData(code int, message string, data interface{}) ErrorInfoWithD
 }
 
 // Data implements the `ErrorInfoWithData.Data()` method
-func (e *errWithData) Data() interface{} {
+func (e *errWithData) Data() any {
 	return e.ErrData
 }

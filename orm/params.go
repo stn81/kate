@@ -3,10 +3,10 @@ package orm
 import "fmt"
 
 // Params stores the Params
-type Params map[string]interface{}
+type Params map[string]any
 
 // ParamsList stores paramslist
-type ParamsList []interface{}
+type ParamsList []any
 
 type colValue struct {
 	value int64
@@ -28,7 +28,7 @@ const (
 //	Params{
 //		"Nums": ColValue(Col_Add, 10),
 //	}
-func ColValue(op operator, value interface{}) interface{} {
+func ColValue(op operator, value any) any {
 	switch op {
 	case ColAdd, ColSub, ColMul, ColDiv:
 	default:

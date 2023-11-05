@@ -9,13 +9,13 @@ import (
 )
 
 // GetBool convert interface to bool.
-func GetBool(v interface{}) bool {
+func GetBool(v any) bool {
 	b, _ := strconv.ParseBool(GetString(v))
 	return b
 }
 
 // GetString convert interface to string.
-func GetString(v interface{}) string {
+func GetString(v any) string {
 	switch result := v.(type) {
 	case string:
 		return result
@@ -30,7 +30,7 @@ func GetString(v interface{}) string {
 }
 
 // GetInt convert interface to int.
-func GetInt(v interface{}) int {
+func GetInt(v any) int {
 	switch result := v.(type) {
 	case int:
 		return result
@@ -48,25 +48,25 @@ func GetInt(v interface{}) int {
 }
 
 // GetInt8 convert interface to int8.
-func GetInt8(v interface{}) int8 {
+func GetInt8(v any) int8 {
 	s, _ := strconv.ParseInt(GetString(v), 10, 8)
 	return int8(s)
 }
 
 // GetInt16 convert interface to int16.
-func GetInt16(v interface{}) int16 {
+func GetInt16(v any) int16 {
 	s, _ := strconv.ParseInt(GetString(v), 10, 16)
 	return int16(s)
 }
 
 // GetInt32 convert interface to int32.
-func GetInt32(v interface{}) int32 {
+func GetInt32(v any) int32 {
 	s, _ := strconv.ParseInt(GetString(v), 10, 32)
 	return int32(s)
 }
 
 // GetInt64 convert interface to int64.
-func GetInt64(v interface{}) int64 {
+func GetInt64(v any) int64 {
 	switch result := v.(type) {
 	case int:
 		return int64(result)
@@ -84,31 +84,31 @@ func GetInt64(v interface{}) int64 {
 }
 
 // GetUint convert interface to uint.
-func GetUint(v interface{}) uint {
+func GetUint(v any) uint {
 	s, _ := strconv.ParseUint(GetString(v), 10, 64)
 	return uint(s)
 }
 
 // GetUint8 convert interface to uint8.
-func GetUint8(v interface{}) uint8 {
+func GetUint8(v any) uint8 {
 	s, _ := strconv.ParseUint(GetString(v), 10, 8)
 	return uint8(s)
 }
 
 // GetUint16 convert interface to uint16.
-func GetUint16(v interface{}) uint16 {
+func GetUint16(v any) uint16 {
 	s, _ := strconv.ParseUint(GetString(v), 10, 16)
 	return uint16(s)
 }
 
 // GetUint32 convert interface to uint32.
-func GetUint32(v interface{}) uint32 {
+func GetUint32(v any) uint32 {
 	s, _ := strconv.ParseUint(GetString(v), 10, 32)
 	return uint32(s)
 }
 
 // GetUint64 convert interface to uint64.
-func GetUint64(v interface{}) uint64 {
+func GetUint64(v any) uint64 {
 	switch result := v.(type) {
 	case int:
 		return uint64(result)
@@ -129,19 +129,19 @@ func GetUint64(v interface{}) uint64 {
 }
 
 // GetFloat32 convert interface to float32.
-func GetFloat32(v interface{}) float32 {
+func GetFloat32(v any) float32 {
 	f, _ := strconv.ParseFloat(GetString(v), 32)
 	return float32(f)
 }
 
 // GetFloat64 convert interface to float64.
-func GetFloat64(v interface{}) float64 {
+func GetFloat64(v any) float64 {
 	f, _ := strconv.ParseFloat(GetString(v), 64)
 	return f
 }
 
 // StringJoin join slice to single string
-func StringJoin(params ...interface{}) string {
+func StringJoin(params ...any) string {
 	var buffer bytes.Buffer
 
 	for _, para := range params {
@@ -152,7 +152,7 @@ func StringJoin(params ...interface{}) string {
 }
 
 // GetIntSlices convert interface to []int
-func GetIntSlices(v interface{}) []int {
+func GetIntSlices(v any) []int {
 
 	switch result := v.(type) {
 
@@ -164,7 +164,7 @@ func GetIntSlices(v interface{}) []int {
 }
 
 // GetInt64Slices convert interface to []int64
-func GetInt64Slices(v interface{}) []int64 {
+func GetInt64Slices(v any) []int64 {
 
 	switch result := v.(type) {
 
@@ -176,7 +176,7 @@ func GetInt64Slices(v interface{}) []int64 {
 }
 
 // GetUint64Slices convert interface to []uint64
-func GetUint64Slices(v interface{}) []uint64 {
+func GetUint64Slices(v any) []uint64 {
 
 	switch result := v.(type) {
 
@@ -188,7 +188,7 @@ func GetUint64Slices(v interface{}) []uint64 {
 }
 
 // GetByteArray convert interface to byte slice.
-func GetByteArray(v interface{}) []byte {
+func GetByteArray(v any) []byte {
 	switch result := v.(type) {
 	case []byte:
 		return result
@@ -200,8 +200,8 @@ func GetByteArray(v interface{}) []byte {
 }
 
 // StringsToInterfaces convert to []string to []interface{}
-func StringsToInterfaces(keys []string) []interface{} {
-	result := make([]interface{}, len(keys))
+func StringsToInterfaces(keys []string) []any {
+	result := make([]any, len(keys))
 	for i, k := range keys {
 		result[i] = k
 	}
@@ -209,7 +209,7 @@ func StringsToInterfaces(keys []string) []interface{} {
 }
 
 // GetByKind convert interface to kind
-func GetByKind(kind reflect.Kind, v interface{}) (result interface{}) {
+func GetByKind(kind reflect.Kind, v any) (result any) {
 	switch kind {
 	case reflect.Bool:
 		result = GetBool(v)

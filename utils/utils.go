@@ -61,7 +61,7 @@ func RepeatWithSep(s string, sep string, count int) string {
 }
 
 // JoinSlice join the slice to string with separator `sep`
-func JoinSlice(slice interface{}, sep string) string {
+func JoinSlice(slice any, sep string) string {
 	var (
 		v = reflect.ValueOf(slice)
 		b bytes.Buffer

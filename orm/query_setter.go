@@ -18,10 +18,10 @@ type QuerySetter interface {
 	//	Filter("profile__Age", 28)
 	// 	 // time compare
 	//	qs.Filter("created", time.Now())
-	Filter(string, ...interface{}) QuerySetter
+	Filter(string, ...any) QuerySetter
 	// Exclude add NOT condition to querySeter.
 	// have the same usage as Filter
-	Exclude(string, ...interface{}) QuerySetter
+	Exclude(string, ...any) QuerySetter
 	// SetCond set condition to QuerySetter.
 	// sql's where condition
 	//	cond := orm.NewCondition()
@@ -88,13 +88,13 @@ type QuerySetter interface {
 	// for example:
 	//	var users []*User
 	//	qs.All(&users) // users[0],users[1],users[2] ...
-	All(container interface{}, cols ...string) error
+	All(container any, cols ...string) error
 	// One query one row data and map to containers.
 	// cols means the columns when querying.
 	// for example:
 	//	var user User
 	//	qs.One(&user) //user.UserName == "slene"
-	One(container interface{}, cols ...string) error
+	One(container any, cols ...string) error
 }
 
 var _ QuerySetter = new(querySetter)
@@ -136,7 +136,7 @@ func (qs querySetter) Distinct() QuerySetter {
 }
 
 // Filter add condition expression to QuerySetter.
-func (qs querySetter) Filter(expr string, args ...interface{}) QuerySetter {
+func (qs querySetter) Filter(expr string, args ...any) QuerySetter {
 	if qs.cond == nil {
 		qs.cond = NewCondition()
 	}
@@ -145,7 +145,7 @@ func (qs querySetter) Filter(expr string, args ...interface{}) QuerySetter {
 }
 
 // Exclude add NOT condition to querySeter.
-func (qs querySetter) Exclude(expr string, args ...interface{}) QuerySetter {
+func (qs querySetter) Exclude(expr string, args ...any) QuerySetter {
 	if qs.cond == nil {
 		qs.cond = NewCondition()
 	}
@@ -231,7 +231,7 @@ func (qs *querySetter) PrepareInsert() (Inserter, error) {
 
 // All query all data and map to containers.
 // cols means the columns when querying.
-func (qs *querySetter) All(container interface{}, cols ...string) error {
+func (qs *querySetter) All(container any, cols ...string) error {
 	if qs.limit == 0 && DefaultLimit != 0 {
 		qs.limit = DefaultLimit
 	}
@@ -240,7 +240,7 @@ func (qs *querySetter) All(container interface{}, cols ...string) error {
 
 // One query one row data and map to containers.
 // cols means the columns when querying.
-func (qs *querySetter) One(container interface{}, cols ...string) error {
+func (qs *querySetter) One(container any, cols ...string) error {
 	qs.limit = 1
 	return qs.mi.ReadOne(qs.orm.ctx, qs.orm.db, qs, qs.cond, container, cols)
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func TestArgs(t *testing.T) {
-	cases := map[string][]interface{}{
+	cases := map[string][]any{
 		"abc ? def\n[123]":                   {"abc $? def", 123},
 		"abc ? def\n[456]":                   {"abc $0 def", 456},
 		"abc  def\n[]":                       {"abc $1 def", 123},
