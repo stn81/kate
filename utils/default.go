@@ -33,7 +33,7 @@ func SetDefaults(ptr interface{}) error {
 			continue
 		}
 
-		if field.IsZero() {
+		if !field.IsZero() {
 			continue
 		}
 
