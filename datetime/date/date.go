@@ -2,6 +2,7 @@ package date
 
 import (
 	"database/sql/driver"
+	"errors"
 	"time"
 )
 
@@ -50,6 +51,15 @@ func (dt Date) String() string {
 
 func (dt Date) Value() (driver.Value, error) {
 	return dt.Time, nil
+}
+
+func (dt Date) Scan(src any) error {
+	t, ok := src.(time.Time)
+	if ok {
+		dt.Time = FromTime(t).Time
+		return nil
+	}
+	return errors.New("invalid value, must be time.Time")
 }
 
 func (dt Date) Before(other Date) bool {
