@@ -40,3 +40,23 @@ func (dt DateTime) String() string {
 func (dt DateTime) Value() (driver.Value, error) {
 	return dt.Time, nil
 }
+
+func (dt DateTime) Before(other DateTime) bool {
+	return dt.Time.Before(other.Time)
+}
+
+func (dt DateTime) After(other DateTime) bool {
+	return dt.Time.After(other.Time)
+}
+
+func (dt DateTime) Equal(other DateTime) bool {
+	return dt.Time.Equal(other.Time)
+}
+
+func (dt DateTime) Compare(other DateTime) int {
+	return dt.Time.Compare(other.Time)
+}
+
+func (dt DateTime) Sub(other DateTime) time.Duration {
+	return dt.Time.Sub(other.Time)
+}

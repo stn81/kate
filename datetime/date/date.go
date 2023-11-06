@@ -51,3 +51,23 @@ func (dt Date) String() string {
 func (dt Date) Value() (driver.Value, error) {
 	return dt.Time, nil
 }
+
+func (dt Date) Before(other Date) bool {
+	return dt.Time.Before(other.Time)
+}
+
+func (dt Date) After(other Date) bool {
+	return dt.Time.After(other.Time)
+}
+
+func (dt Date) Equal(other Date) bool {
+	return dt.Time.Equal(other.Time)
+}
+
+func (dt Date) Compare(other Date) int {
+	return dt.Time.Compare(other.Time)
+}
+
+func (dt Date) Sub(other Date) time.Duration {
+	return dt.Time.Sub(other.Time)
+}
