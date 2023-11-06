@@ -12,7 +12,7 @@ func SetDefaults(ptr any) error {
 	typ := ind.Type()
 	fullName := typ.PkgPath() + "." + typ.Name()
 
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("SetDefaults: cannot use non-ptr struct `%s`", fullName))
 	}
 

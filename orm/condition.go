@@ -278,7 +278,7 @@ func (c *Condition) getOperatorSQL(column, operator string, args []any, cond *sq
 func (c Condition) flatArgs(arg any) []any {
 	val := reflect.ValueOf(arg)
 	kind := val.Kind()
-	if kind == reflect.Ptr {
+	if kind == reflect.Pointer {
 		val = val.Elem()
 		kind = val.Kind()
 		arg = val.Interface()

@@ -345,7 +345,7 @@ func (s *Struct) quoteFields(fields []string) []string {
 }
 
 func dereferencedType(t reflect.Type) reflect.Type {
-	for k := t.Kind(); k == reflect.Ptr || k == reflect.Interface; k = t.Kind() {
+	for k := t.Kind(); k == reflect.Pointer || k == reflect.Interface; k = t.Kind() {
 		t = t.Elem()
 	}
 
@@ -355,7 +355,7 @@ func dereferencedType(t reflect.Type) reflect.Type {
 func dereferencedValue(value any) reflect.Value {
 	v := reflect.ValueOf(value)
 
-	for k := v.Kind(); k == reflect.Ptr || k == reflect.Interface; k = v.Kind() {
+	for k := v.Kind(); k == reflect.Pointer || k == reflect.Interface; k = v.Kind() {
 		v = v.Elem()
 	}
 

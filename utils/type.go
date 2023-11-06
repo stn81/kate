@@ -12,7 +12,7 @@ func IsType(value reflect.Value, expected reflect.Type) bool {
 
 	typ := value.Type()
 	kind := value.Kind()
-	if kind == reflect.Ptr {
+	if kind == reflect.Pointer {
 		typ = value.Type().Elem()
 	}
 	return typ == expected

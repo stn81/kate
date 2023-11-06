@@ -219,7 +219,7 @@ func (mi *modelInfo) setDynamicFields(ind reflect.Value, dynColumns []string) er
 	}
 
 	addrVal := ind
-	if ind.CanAddr() && ind.Kind() != reflect.Ptr {
+	if ind.CanAddr() && ind.Kind() != reflect.Pointer {
 		addrVal = ind.Addr()
 	}
 

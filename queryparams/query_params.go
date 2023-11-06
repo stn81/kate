@@ -39,7 +39,7 @@ func NewQueryParamsFromTag(ptr any) *QueryParams {
 	typ := ind.Type()
 	fullName := typ.PkgPath() + "." + typ.Name()
 
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("GetQueryParams: cannot use non-ptr struct `%s`", fullName))
 	}
 
@@ -74,7 +74,7 @@ func NewQueryParamsFromTag(ptr any) *QueryParams {
 		field := ind.Field(i)
 		kind := field.Kind()
 
-		if kind == reflect.Ptr && field.IsNil() {
+		if kind == reflect.Pointer && field.IsNil() {
 			continue
 		}
 

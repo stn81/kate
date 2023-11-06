@@ -30,7 +30,7 @@ func (pi *preparedInserter) Insert(md any) (int64, error) {
 	ind := reflect.Indirect(val)
 	typ := ind.Type()
 	name := getFullName(typ)
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("<Inserter.Insert> cannot use non-ptr model struct `%s`", name))
 	}
 	if name != pi.mi.fullName {

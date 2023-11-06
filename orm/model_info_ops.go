@@ -410,7 +410,7 @@ func (mi *modelInfo) ReadOne(ctx context.Context, db dbQueryer, qs *querySetter,
 	val := reflect.ValueOf(container)
 	ind := reflect.Indirect(val)
 
-	if val.Kind() != reflect.Ptr || mi.fullName != getFullName(ind.Type()) {
+	if val.Kind() != reflect.Pointer || mi.fullName != getFullName(ind.Type()) {
 		panic(fmt.Errorf("wrong object type `%s` for rows scan, need *%s", val.Type(), mi.fullName))
 	}
 
@@ -468,7 +468,7 @@ func (mi *modelInfo) ReadBatch(ctx context.Context, db dbQueryer, qs *querySette
 	ind := reflect.Indirect(val)
 	isPtr := true
 
-	if val.Kind() != reflect.Ptr || ind.Kind() != reflect.Slice || ind.Len() > 0 {
+	if val.Kind() != reflect.Pointer || ind.Kind() != reflect.Slice || ind.Len() > 0 {
 		panic(fmt.Errorf("wrong object type `%s` for rows scan, need and empty slice *[]*%s or *[]%s",
 			val.Type(),
 			mi.fullName,
@@ -478,7 +478,7 @@ func (mi *modelInfo) ReadBatch(ctx context.Context, db dbQueryer, qs *querySette
 	fn := ""
 	typ := ind.Type().Elem()
 	switch typ.Kind() {
-	case reflect.Ptr:
+	case reflect.Pointer:
 		fn = getFullName(typ.Elem())
 	case reflect.Struct:
 		isPtr = false

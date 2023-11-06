@@ -23,7 +23,7 @@ func FillStructByTag(ptr any, tag string, input map[string]any) (filled []string
 	typ := ind.Type()
 	fullName := typ.PkgPath() + "." + typ.Name()
 
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("FillStructByTag: cannot use non-ptr struct `%s`", fullName))
 	}
 
@@ -87,7 +87,7 @@ func Bind(ptr any, tag string, input map[string]any) error {
 	typ := ind.Type()
 	fullName := typ.PkgPath() + "." + typ.Name()
 
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("bind: cannot use non-ptr struct `%s`", fullName))
 	}
 
@@ -139,7 +139,7 @@ func bindSlice(field reflect.Value, value any) error {
 
 	ind := reflect.Indirect(field)
 	typ := ind.Type().Elem()
-	isPtr := typ.Kind() == reflect.Ptr
+	isPtr := typ.Kind() == reflect.Pointer
 
 	if isPtr {
 		typ = typ.Elem()
@@ -168,7 +168,7 @@ func bindSlice(field reflect.Value, value any) error {
 
 func bindValuePtr(field reflect.Value, value any) error {
 	vv := reflect.ValueOf(value)
-	if vv.Kind() == reflect.Ptr {
+	if vv.Kind() == reflect.Pointer {
 		field.Set(vv)
 		return nil
 	}
@@ -196,7 +196,7 @@ func bindValue(field reflect.Value, value any) error {
 	}
 
 	switch field.Kind() {
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return bindValuePtr(field, value)
 	case reflect.Bool:
 		field.SetBool(GetBool(value))

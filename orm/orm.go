@@ -88,7 +88,7 @@ func (o *orm) getMiInd(md any, needPtr bool) (mi *modelInfo, ind reflect.Value) 
 	val := reflect.ValueOf(md)
 	ind = reflect.Indirect(val)
 	typ := ind.Type()
-	if needPtr && val.Kind() != reflect.Ptr {
+	if needPtr && val.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("<Ormer> cannot use non-ptr model struct `%s`", getFullName(typ)))
 	}
 
@@ -191,7 +191,7 @@ func (o *orm) Delete(md any, cols ...string) (int64, error) {
 
 func (o *orm) QueryTable(ptrStruct any) QuerySetter {
 	typ := reflect.TypeOf(ptrStruct)
-	if typ.Kind() != reflect.Ptr {
+	if typ.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("<Ormer.QueryTable> must be struct ptr, but got %v", typ))
 	}
 	elemTyp := typ.Elem()

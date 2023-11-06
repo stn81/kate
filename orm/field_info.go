@@ -41,7 +41,7 @@ func newFieldInfo(mi *modelInfo, field reflect.Value, sf reflect.StructField, mN
 	//  an element of an addressable array, a field of an
 	//  addressable struct, or the result of dereferencing a pointer.
 	addrField = field
-	if field.CanAddr() && field.Kind() != reflect.Ptr {
+	if field.CanAddr() && field.Kind() != reflect.Pointer {
 		addrField = field.Addr()
 	}
 

@@ -13,13 +13,13 @@ func registerModel(PrefixOrSuffix, dbName string, model any, isPrefix bool) {
 	val := reflect.ValueOf(model)
 	typ := reflect.Indirect(val).Type()
 
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		panic(fmt.Errorf("register model: cannot use non-ptr model struct `%s`", getFullName(typ)))
 	}
 	// For this case:
 	// u := &User{}
 	// registerModel(&u)
-	if typ.Kind() == reflect.Ptr {
+	if typ.Kind() == reflect.Pointer {
 		panic(errors.New("register model: only allow ptr model struct"))
 	}
 

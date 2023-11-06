@@ -138,13 +138,13 @@ func (rq *rawQueryer) QueryRows(container any) error {
 		fullName string
 	)
 
-	if val.Kind() != reflect.Ptr || ind.Kind() != reflect.Slice || ind.Len() != 0 {
+	if val.Kind() != reflect.Pointer || ind.Kind() != reflect.Slice || ind.Len() != 0 {
 		panic(fmt.Errorf("<RawQueryer> QueryRows() container should be a ptr of empty struct slice"))
 	}
 
 	typ := ind.Type().Elem()
 	switch typ.Kind() {
-	case reflect.Ptr:
+	case reflect.Pointer:
 		fullName = getFullName(typ.Elem())
 	case reflect.Struct:
 		isPtr = false
