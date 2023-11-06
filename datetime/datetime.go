@@ -9,6 +9,22 @@ type DateTime struct {
 	time.Time
 }
 
+func Now() DateTime {
+	return FromTime(time.Now())
+}
+
+func FromTime(t time.Time) DateTime {
+	return DateTime{
+		Time: t.Truncate(time.Second),
+	}
+}
+
+func New(year, month, day, hour, minute, second int) DateTime {
+	return DateTime{
+		Time: time.Date(year, time.Month(month), day, hour, minute, second, 0, time.Local),
+	}
+}
+
 func (dt *DateTime) UnmarshalBind(value string) error {
 	var err error
 	if dt.Time, err = time.Parse(time.DateTime, value); err != nil {
@@ -22,25 +38,5 @@ func (dt DateTime) String() string {
 }
 
 func (dt DateTime) Value() (driver.Value, error) {
-	return dt.Time, nil
-}
-
-type Date struct {
-	time.Time
-}
-
-func (dt *Date) UnmarshalBind(value string) error {
-	var err error
-	if dt.Time, err = time.Parse(time.DateOnly, value); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (dt Date) String() string {
-	return dt.Time.Format(time.DateOnly)
-}
-
-func (dt Date) Value() (driver.Value, error) {
 	return dt.Time, nil
 }
