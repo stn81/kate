@@ -51,6 +51,29 @@ func (dt DateTime) Scan(src any) error {
 	return errors.New("invalid value, must be time.Time")
 }
 
+func (dt DateTime) MarshalJSON() ([]byte, error) {
+	bytes := []byte(`"` + dt.String() + `"`)
+	return bytes, nil
+}
+
+func (dt *DateTime) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		return nil
+	}
+	if len(data) < 2 || data[0] != '"' || data[len(data)-1] != '"' {
+		return errors.New("DateTime.UnmarshalJSON: input is not a JSON string")
+	}
+	data = data[len(`"`) : len(data)-len(`"`)]
+	t, err := time.Parse(time.DateTime, string(data))
+	if err != nil {
+		return err
+	}
+	*dt = DateTime{
+		Time: t,
+	}
+	return nil
+}
+
 func (dt DateTime) Before(other DateTime) bool {
 	return dt.Time.Before(other.Time)
 }
