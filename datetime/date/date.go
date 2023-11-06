@@ -50,7 +50,7 @@ func (dt Date) String() string {
 }
 
 func (dt Date) Value() (driver.Value, error) {
-	return dt.Time, nil
+	return dt.String(), nil
 }
 
 func (dt Date) Scan(src any) error {

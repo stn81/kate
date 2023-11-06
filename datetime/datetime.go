@@ -39,7 +39,7 @@ func (dt DateTime) String() string {
 }
 
 func (dt DateTime) Value() (driver.Value, error) {
-	return dt.Time, nil
+	return dt.String(), nil
 }
 
 func (dt DateTime) Scan(src any) error {
