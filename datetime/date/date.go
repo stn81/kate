@@ -53,7 +53,7 @@ func (dt Date) Value() (driver.Value, error) {
 	return dt.String(), nil
 }
 
-func (dt Date) Scan(src any) error {
+func (dt *Date) Scan(src any) error {
 	t, ok := src.(time.Time)
 	if ok {
 		dt.Time = FromTime(t).Time
