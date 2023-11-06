@@ -17,9 +17,9 @@ const (
 )
 
 type request struct {
-	task   Task
-	delay  int64
-	result chan *TimerTask
+	task           Task
+	delayInSeconds int64
+	result         chan *TimerTask
 }
 
 // TimerEngine define the timer engine
@@ -65,13 +65,13 @@ func (te *TimerEngine) Name() string {
 	return te.name
 }
 
-// Start start the timer engine
+// Start the timer engine
 func (te *TimerEngine) Start() {
 	te.wg.Add(1)
 	go te.loop()
 }
 
-// Stop stop the timer engine
+// Stop the timer engine
 func (te *TimerEngine) Stop() {
 	te.cancel()
 	te.wg.Wait()
@@ -99,7 +99,7 @@ func (te *TimerEngine) loop() {
 			{
 				var (
 					tickIndex   = te.getTickIndex()
-					offset      = int(req.delay) + int(tickIndex)
+					offset      = int(req.delayInSeconds) + int(tickIndex)
 					cycleNum    = offset / RingSize
 					bucketIndex = offset % RingSize
 					bucket      = te.buckets[bucketIndex]
@@ -154,8 +154,8 @@ func (te *TimerEngine) execute(f TaskFunc) {
 	te.executors.Schedule(f)
 }
 
-// Schedule schedule a timer task with delay
-func (te *TimerEngine) Schedule(task Task, delay int64) (timerTask *TimerTask) {
+// Schedule a timer task with delay
+func (te *TimerEngine) Schedule(task Task, delay time.Duration) (timerTask *TimerTask) {
 	if delay <= 0 {
 		timerTask = newTimerTask(te, 0, task)
 		timerTask.dispose()
@@ -163,9 +163,9 @@ func (te *TimerEngine) Schedule(task Task, delay int64) (timerTask *TimerTask) {
 	}
 
 	req := &request{
-		task:   task,
-		delay:  delay,
-		result: make(chan *TimerTask, 1),
+		task:           task,
+		delayInSeconds: int64(delay.Seconds()),
+		result:         make(chan *TimerTask, 1),
 	}
 
 	select {
