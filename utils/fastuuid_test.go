@@ -2,14 +2,14 @@ package utils
 
 import "testing"
 
-func BenchmarkFastUUID(t *testing.B) {
+func BenchmarkFastUuid(t *testing.B) {
 	for i := 0; i < t.N; i++ {
-		FastUUID()
+		FastUuid()
 	}
 }
 
-func BenchmarkFastUUIDStr(t *testing.B) {
+func BenchmarkFastUuidStr(t *testing.B) {
 	for i := 0; i < t.N; i++ {
-		FastUUIDStr()
+		FastUuidStr()
 	}
 }

@@ -11,16 +11,16 @@ type ctxMarker struct{}
 var ctxMarkerKey = &ctxMarker{}
 
 func New() string {
-	return utils.FastUUIDStr()
+	return utils.FastUuidStr()
 }
 
 func Extract(ctx context.Context) string {
-	if traceID, ok := ctx.Value(ctxMarkerKey).(string); ok {
-		return traceID
+	if traceId, ok := ctx.Value(ctxMarkerKey).(string); ok {
+		return traceId
 	}
 	return ""
 }
 
-func ToContext(ctx context.Context, traceID string) context.Context {
-	return context.WithValue(ctx, ctxMarkerKey, traceID)
+func ToContext(ctx context.Context, traceId string) context.Context {
+	return context.WithValue(ctx, ctxMarkerKey, traceId)
 }

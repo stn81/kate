@@ -31,7 +31,7 @@ type TimerEngine struct {
 	ticker    <-chan time.Time
 	tickIndex uint32
 	executors *taskengine.TaskEngine
-	taskIDSeq uint64
+	taskIdSeq uint64
 	ctx       context.Context
 	cancel    context.CancelFunc
 	wg        sync.WaitGroup
@@ -134,8 +134,8 @@ func (te *TimerEngine) loop() {
 	}
 }
 
-func (te *TimerEngine) nextTaskID() uint64 {
-	return atomic.AddUint64(&te.taskIDSeq, 1)
+func (te *TimerEngine) nextTaskId() uint64 {
+	return atomic.AddUint64(&te.taskIdSeq, 1)
 }
 
 func (te *TimerEngine) updateTickIndex() uint32 {

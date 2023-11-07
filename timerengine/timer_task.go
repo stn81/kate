@@ -22,7 +22,7 @@ func (f TaskFunc) Run() {
 // TimerTask define the timer task
 type TimerTask struct {
 	sync.Mutex
-	ID        uint64
+	Id        uint64
 	task      Task
 	cycleNum  int
 	engine    *TimerEngine
@@ -31,10 +31,10 @@ type TimerTask struct {
 }
 
 func newTimerTask(engine *TimerEngine, cycleNum int, task Task) *TimerTask {
-	taskID := engine.nextTaskID()
+	taskId := engine.nextTaskId()
 
 	timerTask := &TimerTask{
-		ID:       taskID,
+		Id:       taskId,
 		task:     task,
 		cycleNum: cycleNum,
 		engine:   engine,
@@ -42,7 +42,7 @@ func newTimerTask(engine *TimerEngine, cycleNum int, task Task) *TimerTask {
 	return timerTask
 }
 
-// Cancel cancel the task
+// Cancel the task
 func (timerTask *TimerTask) Cancel() (ok bool) {
 	timerTask.Lock()
 	if !timerTask.started {

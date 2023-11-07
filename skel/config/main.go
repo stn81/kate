@@ -5,7 +5,6 @@ import (
 	"path"
 
 	"github.com/stn81/kate/app"
-	"gopkg.in/ini.v1"
 )
 
 // Main is the log config instance
@@ -13,7 +12,7 @@ var Main = &MainConfig{}
 
 // MainConfig defines the Main config
 type MainConfig struct {
-	PIDFile string
+	PidFile string
 	LogDir  string
 }
 
@@ -24,8 +23,8 @@ func (conf *MainConfig) SectionName() string {
 
 // Load implements the `Config.Load()` method
 func (conf *MainConfig) Load(section *ini.Section) error {
-	defaultPIDFile := path.Join(app.GetHomeDir(), "run", fmt.Sprintf("%s.pid", app.GetName()))
-	conf.PIDFile = section.Key("pid_file").MustString(defaultPIDFile)
+	defaultPidFile := path.Join(app.GetHomeDir(), "run", fmt.Sprintf("%s.pid", app.GetName()))
+	conf.PidFile = section.Key("pid_file").MustString(defaultPidFile)
 	conf.LogDir = section.Key("log_dir").MustString("")
 	return nil
 }

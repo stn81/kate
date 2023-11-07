@@ -58,7 +58,7 @@ func (s *httpService) start() {
 
 	// 定义中间件栈，可根据需要在下面追加
 	c := kate.NewChain(
-		kate.TraceID,
+		kate.TraceId,
 		kate.Logging(s.accessLogger),
 		kate.Recovery,
 	)

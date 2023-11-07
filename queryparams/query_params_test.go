@@ -9,7 +9,7 @@ import (
 )
 
 type queryReq struct {
-	IDs             *[]int64 `filter:"ID__in"`
+	Ids             *[]int64 `filter:"Id__in"`
 	Name            *string  `filter:"Name__icontains"`
 	CreateTimeBegin *int64   `filter:"CreateTime__gte"`
 	CreateTimeEnd   *int64   `filter:"CreateTime__lt"`
@@ -29,7 +29,7 @@ func TestNewQueryParams(t *testing.T) {
 	page := 1
 	perPage := 10
 	req := &queryReq{
-		IDs:             &ids,
+		Ids:             &ids,
 		Name:            &name,
 		CreateTimeBegin: &createTimeBegin,
 		CreateTimeEnd:   &createTimeEnd,
@@ -39,7 +39,7 @@ func TestNewQueryParams(t *testing.T) {
 	}
 
 	expectedFilters := map[string]any{
-		"ID__in":          ids,
+		"Id__in":          ids,
 		"Name__icontains": name,
 		"CreateTime__gte": createTimeBegin,
 		"CreateTime__lt":  createTimeEnd,

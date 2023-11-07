@@ -53,8 +53,8 @@ func GetPidFile() string {
 	return pidFile
 }
 
-// UpdatePIDFile update the pid in pidfile
-func UpdatePIDFile(fileName string) error {
+// UpdatePidFile update the pid in pidfile
+func UpdatePidFile(fileName string) error {
 	var (
 		runDir = path.Dir(fileName)
 		pid    = os.Getpid()
@@ -74,8 +74,8 @@ func UpdatePIDFile(fileName string) error {
 	return nil
 }
 
-// RemovePIDFile do the application clean up
-func RemovePIDFile() {
+// RemovePidFile do the application clean up
+func RemovePidFile() {
 	if pidFile != "" {
 		_ = os.Remove(pidFile)
 	}

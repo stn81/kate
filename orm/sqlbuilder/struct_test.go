@@ -11,7 +11,7 @@ import (
 )
 
 type structUserForTest struct {
-	ID        int    `db:"id" fieldtag:"important"`
+	Id        int    `db:"id" fieldtag:"important"`
 	Name      string `fieldtag:"important"`
 	Status    int    `db:"status" fieldtag:"important"`
 	CreatedAt int    `db:"created_at"`
@@ -47,7 +47,7 @@ func TestStructSelectFromForTag(t *testing.T) {
 
 func TestStructUpdate(t *testing.T) {
 	user := &structUserForTest{
-		ID:        123,
+		Id:        123,
 		Name:      "Huan Du",
 		Status:    2,
 		CreatedAt: 1234567890,
@@ -66,7 +66,7 @@ func TestStructUpdate(t *testing.T) {
 
 func TestStructUpdateForTag(t *testing.T) {
 	user := &structUserForTest{
-		ID:        123,
+		Id:        123,
 		Name:      "Huan Du",
 		Status:    2,
 		CreatedAt: 1234567890,
@@ -85,7 +85,7 @@ func TestStructUpdateForTag(t *testing.T) {
 
 func TestStructInsertInto(t *testing.T) {
 	user := &structUserForTest{
-		ID:        123,
+		Id:        123,
 		Name:      "Huan Du",
 		Status:    2,
 		CreatedAt: 1234567890,
@@ -102,14 +102,14 @@ func TestStructInsertInto(t *testing.T) {
 	}
 
 	user2 := &structUserForTest{
-		ID:        456,
+		Id:        456,
 		Name:      "Du Huan",
 		Status:    2,
 		CreatedAt: 1234567890,
 	}
 
 	fakeUser := struct {
-		ID int
+		Id int
 	}{789}
 
 	users := []any{user, user2, &fakeUser}
@@ -127,7 +127,7 @@ func TestStructInsertInto(t *testing.T) {
 
 func TestStructInsertIntoForTag(t *testing.T) {
 	user := &structUserForTest{
-		ID:        123,
+		Id:        123,
 		Name:      "Huan Du",
 		Status:    2,
 		CreatedAt: 1234567890,
@@ -144,14 +144,14 @@ func TestStructInsertIntoForTag(t *testing.T) {
 	}
 
 	user2 := &structUserForTest{
-		ID:        456,
+		Id:        456,
 		Name:      "Du Huan",
 		Status:    2,
 		CreatedAt: 1234567890,
 	}
 
 	fakeUser := struct {
-		ID int
+		Id int
 	}{789}
 
 	users := []any{user, user2, &fakeUser}
@@ -184,12 +184,12 @@ func TestStructDeleteFrom(t *testing.T) {
 func TestStructAddr(t *testing.T) {
 	user := new(structUserForTest)
 	expected := &structUserForTest{
-		ID:        123,
+		Id:        123,
 		Name:      "huandu",
 		Status:    2,
 		CreatedAt: 1234567890,
 	}
-	str := fmt.Sprintf("%v %v %v %v", expected.ID, expected.Name, expected.Status, expected.CreatedAt)
+	str := fmt.Sprintf("%v %v %v %v", expected.Id, expected.Name, expected.Status, expected.CreatedAt)
 	_, _ = fmt.Sscanf(str, "%d%s%d%d", userForTest.Addr(user)...)
 
 	if !reflect.DeepEqual(expected, user) {
@@ -200,13 +200,13 @@ func TestStructAddr(t *testing.T) {
 func TestStructAddrForTag(t *testing.T) {
 	user := new(structUserForTest)
 	expected := &structUserForTest{
-		ID:        123,
+		Id:        123,
 		Name:      "huandu",
 		Status:    2,
 		CreatedAt: 1234567890,
 	}
 	user.CreatedAt = 9876543210
-	str := fmt.Sprintf("%v %v %v %v", expected.ID, expected.Name, expected.Status, expected.CreatedAt)
+	str := fmt.Sprintf("%v %v %v %v", expected.Id, expected.Name, expected.Status, expected.CreatedAt)
 	_, _ = fmt.Sscanf(str, "%d%s%d%d", userForTest.AddrForTag("important", user)...)
 	expected.CreatedAt = 9876543210
 
@@ -218,12 +218,12 @@ func TestStructAddrForTag(t *testing.T) {
 func TestStructAddrWithCols(t *testing.T) {
 	user := new(structUserForTest)
 	expected := &structUserForTest{
-		ID:        123,
+		Id:        123,
 		Name:      "huandu",
 		Status:    2,
 		CreatedAt: 1234567890,
 	}
-	str := fmt.Sprintf("%v %v %v %v", expected.Name, expected.ID, expected.CreatedAt, expected.Status)
+	str := fmt.Sprintf("%v %v %v %v", expected.Name, expected.Id, expected.CreatedAt, expected.Status)
 	_, _ = fmt.Sscanf(str, "%s%d%d%d", userForTest.AddrWithCols([]string{"Name", "id", "created_at", "status"}, user)...)
 
 	if !reflect.DeepEqual(expected, user) {
@@ -232,16 +232,16 @@ func TestStructAddrWithCols(t *testing.T) {
 }
 
 type User struct {
-	ID     int64  `db:"id"`
+	Id     int64  `db:"id"`
 	Name   string `db:"name"`
 	Status int    `db:"status"`
 }
 
 type Order struct {
-	ID          int64  `db:"id" fieldtag:"new"`
+	Id          int64  `db:"id" fieldtag:"new"`
 	State       State  `db:"state" fieldtag:"new,paid,done"`
-	SkuID       int64  `db:"sku_id" fieldtag:"new"`
-	UserID      int64  `db:"user_id" fieldtag:"new"`
+	SkuId       int64  `db:"sku_id" fieldtag:"new"`
+	UserId      int64  `db:"user_id" fieldtag:"new"`
 	Price       int64  `db:"price" fieldtag:"new,update"`
 	Discount    int64  `db:"discount" fieldtag:"new,update"`
 	Description string `db:"description" fieldtag:"new,update"`
@@ -284,7 +284,7 @@ func ExampleStruct_useStructAsORM() {
 	// Suppose we defined following type and global variable.
 	//
 	//     type User struct {
-	//         ID     int64  `db:"id"`
+	//         Id     int64  `db:"id"`
 	//         Name   string `db:"name"`
 	//         Status int    `db:"status"`
 	//     }
@@ -313,17 +313,17 @@ func ExampleStruct_useStructAsORM() {
 	// Output:
 	// SELECT id, name, status FROM user WHERE id = ?
 	// [1234]
-	// sqlbuilder.User{ID:1234, Name:"huandu", Status:1}
+	// sqlbuilder.User{Id:1234, Name:"huandu", Status:1}
 }
 
 func ExampleStruct_useTag() {
 	// Suppose we defined following type and global variable.
 	//
 	//     type Order struct {
-	//         ID          int64  `db:"id" fieldtag:"update,paid"`
+	//         Id          int64  `db:"id" fieldtag:"update,paid"`
 	//         State       int    `db:"state" fieldtag:"paid"`
-	//         SkuID       int64  `db:"sku_id"`
-	//         UserID      int64  `db:"user_id"`
+	//         SkuId       int64  `db:"sku_id"`
+	//         UserId      int64  `db:"user_id"`
 	//         Price       int64  `db:"price" fieldtag:"update"`
 	//         Discount    int64  `db:"discount" fieldtag:"update"`
 	//         Description string `db:"description" fieldtag:"update"`
@@ -336,10 +336,10 @@ func ExampleStruct_useTag() {
 	createOrder := func(table string) {
 		now := time.Now().Unix()
 		order := &Order{
-			ID:          1234,
+			Id:          1234,
 			State:       OrderStateCreated,
-			SkuID:       5678,
-			UserID:      7527,
+			SkuId:       5678,
+			UserId:      7527,
 			Price:       1000,
 			Discount:    0,
 			Description: "Best goods",
@@ -367,7 +367,7 @@ func ExampleStruct_useTag() {
 
 		// Save the order.
 		b := orderStruct.UpdateForTag(table, tag, &order)
-		b.Where(b.E("id", order.ID))
+		b.Where(b.E("id", order.Id))
 		sql, args = b.Build()
 		db.Exec(sql, args...)
 	}
@@ -396,7 +396,7 @@ func ExampleStruct_useTag() {
 
 		// Save the order.
 		b := orderStruct.UpdateForTag(table, tag, &order)
-		b.Where(b.E("id", order.ID))
+		b.Where(b.E("id", order.Id))
 		sql, args = b.Build()
 		db.Exec(sql, args...)
 	}
@@ -416,7 +416,7 @@ func ExampleStruct_buildUPDATE() {
 	// Suppose we defined following type and global variable.
 	//
 	//     type User struct {
-	//         ID     int64  `db:"id"`
+	//         Id     int64  `db:"id"`
 	//         Name   string `db:"name"`
 	//         Status int    `db:"status"`
 	//     }
@@ -425,12 +425,12 @@ func ExampleStruct_buildUPDATE() {
 
 	// Prepare UPDATE query.
 	user := &User{
-		ID:     1234,
+		Id:     1234,
 		Name:   "Huan Du",
 		Status: 1,
 	}
 	ub := userStruct.Update("user", user)
-	ub.Where(ub.E("id", user.ID))
+	ub.Where(ub.E("id", user.Id))
 
 	// Execute the query.
 	sql, args := ub.Build()
@@ -448,7 +448,7 @@ func ExampleStruct_buildINSERT() {
 	// Suppose we defined following type and global variable.
 	//
 	//     type User struct {
-	//         ID     int64  `db:"id"`
+	//         Id     int64  `db:"id"`
 	//         Name   string `db:"name"`
 	//         Status int    `db:"status"`
 	//     }
@@ -457,7 +457,7 @@ func ExampleStruct_buildINSERT() {
 
 	// Prepare INSERT query.
 	user := &User{
-		ID:     1234,
+		Id:     1234,
 		Name:   "Huan Du",
 		Status: 1,
 	}
@@ -479,7 +479,7 @@ func ExampleStruct_buildDELETE() {
 	// Suppose we defined following type and global variable.
 	//
 	//     type User struct {
-	//         ID     int64  `db:"id"`
+	//         Id     int64  `db:"id"`
 	//         Name   string `db:"name"`
 	//         Status int    `db:"status"`
 	//     }
@@ -488,12 +488,12 @@ func ExampleStruct_buildDELETE() {
 
 	// Prepare DELETE query.
 	user := &User{
-		ID:     1234,
+		Id:     1234,
 		Name:   "Huan Du",
 		Status: 1,
 	}
 	b := userStruct.DeleteFrom("user")
-	b.Where(b.E("id", user.ID))
+	b.Where(b.E("id", user.Id))
 
 	// Execute the query.
 	sql, args := b.Build()

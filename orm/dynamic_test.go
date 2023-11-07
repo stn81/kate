@@ -17,7 +17,7 @@ type bDynContent struct {
 }
 
 type dynamicModel struct {
-	ID      int64         `orm:"pk;column(id)"`
+	Id      int64         `orm:"pk;column(id)"`
 	Type    string        `orm:"column(type)"`
 	Content *dynamic.Type `orm:"column(content);json"`
 }
@@ -48,7 +48,7 @@ func TestDynamic(t *testing.T) {
 	}
 	aId, err := db.Insert(aObj)
 	require.NoError(t, err, "insert dyn aObj")
-	t.Logf("aObj.ID=%v", aId)
+	t.Logf("aObj.Id=%v", aId)
 
 	bObj := &dynamicModel{
 		Type: "B",
@@ -58,10 +58,10 @@ func TestDynamic(t *testing.T) {
 	}
 	bId, err := db.Insert(bObj)
 	require.NoError(t, err, "insert dyn bObj")
-	t.Logf("bObj.ID=%v", bId)
+	t.Logf("bObj.Id=%v", bId)
 
-	aObjRead := &dynamicModel{ID: aId}
-	bObjRead := &dynamicModel{ID: bId}
+	aObjRead := &dynamicModel{Id: aId}
+	bObjRead := &dynamicModel{Id: bId}
 	err = db.Read(aObjRead)
 	require.NoError(t, err, "read dyn aObj")
 	require.Equal(t, "A", aObjRead.Type, "check read dyn aObj.Type")

@@ -32,7 +32,7 @@ func (c *jsonContent) NewDynamicField(name string) any {
 }
 
 type jsonModel struct {
-	ID         int64        `json:"id" orm:"pk;column(id)"`
+	Id         int64        `json:"id" orm:"pk;column(id)"`
 	Content    jsonContent  `json:"content" orm:"column(content);json"`
 	ContentPtr *jsonContent `json:"content_ptr" orm:"column(content_ptr);json"`
 }
@@ -61,7 +61,7 @@ func TestJSON(t *testing.T) {
 
 	aId, err := db.Insert(aObj)
 	require.NoError(t, err, "insert aObj")
-	t.Logf("aObj.ID=%v", aId)
+	t.Logf("aObj.Id=%v", aId)
 
 	bObj := &jsonModel{
 		Content: jsonContent{
@@ -76,10 +76,10 @@ func TestJSON(t *testing.T) {
 
 	bId, err := db.Insert(bObj)
 	require.NoError(t, err, "insert bObj")
-	t.Logf("bObj.ID=%v", bId)
+	t.Logf("bObj.Id=%v", bId)
 
-	aObjRead := &jsonModel{ID: aId}
-	bObjRead := &jsonModel{ID: bId}
+	aObjRead := &jsonModel{Id: aId}
+	bObjRead := &jsonModel{Id: bId}
 
 	err = db.Read(aObjRead)
 	require.NoError(t, err, "read aObj")
@@ -101,7 +101,7 @@ func TestJSON(t *testing.T) {
 }
 
 type mapJsonModel struct {
-	ID      int64          `json:"id" orm:"pk;column(id)"`
+	Id      int64          `json:"id" orm:"pk;column(id)"`
 	Content map[string]any `json:"content" orm:"column(content);json"`
 }
 
@@ -121,7 +121,7 @@ func TestJSONMap(t *testing.T) {
 	id, err := db.Insert(mapObj)
 	require.NoError(t, err, "insert map json obj")
 
-	mapObjRead := &mapJsonModel{ID: id}
+	mapObjRead := &mapJsonModel{Id: id}
 	err = db.Read(mapObjRead)
 	require.NoError(t, err, "read map json obj")
 	require.Equal(t, content, mapObjRead.Content, "check map json content readed")

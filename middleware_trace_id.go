@@ -7,19 +7,22 @@ import (
 	"go.uber.org/zap"
 )
 
-func TraceID(h ContextHandler) ContextHandler {
+const HeaderTraceId = "X-Trace-Id"
+
+func TraceId(h ContextHandler) ContextHandler {
 	f := func(ctx context.Context, w ResponseWriter, r *Request) {
 		var (
-			traceID = r.Header.Get("X-Trace-ID")
+			traceId = r.Header.Get(HeaderTraceId)
 			logger  = log.GetLogger(ctx)
 		)
 
-		if traceID == "" {
-			traceID = traceid.New()
+		if traceId == "" {
+			traceId = traceid.New()
 		}
+		w.Header().Set(HeaderTraceId, traceId)
 
-		logger = logger.With(zap.String("trace_id", traceID))
-		ctx = traceid.ToContext(ctx, traceID)
+		logger = logger.With(zap.String("trace_id", traceId))
+		ctx = traceid.ToContext(ctx, traceId)
 		ctx = log.ToContext(ctx, logger)
 		h.ServeHTTP(ctx, w, r)
 	}

@@ -59,7 +59,7 @@ func TestBind(t *testing.T) {
 }
 
 type taggedStruct struct {
-	ID    int
+	Id    int
 	Name  string `field:"create"`
 	Value string `field:"create,update"`
 }
@@ -67,13 +67,13 @@ type taggedStruct struct {
 func TestFillStructByTag(t *testing.T) {
 	createVal := &taggedStruct{}
 	createParams := map[string]any{
-		"ID":    100,
+		"Id":    100,
 		"Name":  "zhangsan",
 		"Value": "hello",
 	}
 	filledByCreate, err := FillStructByTag(createVal, "create", createParams)
 	require.NoError(t, err, "fill struct by tag create")
-	require.Equal(t, 0, createVal.ID)
+	require.Equal(t, 0, createVal.Id)
 	require.Equal(t, "zhangsan", createVal.Name)
 	require.Equal(t, "hello", createVal.Value)
 	require.Equal(t, []string{"Name", "Value"}, filledByCreate)

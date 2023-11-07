@@ -8,13 +8,13 @@ import (
 
 var uuidGenerator = fastuuid.MustNewGenerator()
 
-// FastUUID generate a new UUID as []byte
-func FastUUID() [24]byte {
+// FastUuid generate a new UUID as []byte
+func FastUuid() [24]byte {
 	return uuidGenerator.Next()
 }
 
-// FastUUIDStr generate a new UUID as string
-func FastUUIDStr() string {
+// FastUuidStr generate a new UUID as string
+func FastUuidStr() string {
 	b := uuidGenerator.Next()
 	return hex.EncodeToString(b[:])
 }

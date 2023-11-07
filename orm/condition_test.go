@@ -9,7 +9,7 @@ import (
 )
 
 type Person struct {
-	ID   int64  `orm:"pk;column(id)"`
+	Id   int64  `orm:"pk;column(id)"`
 	Name string `orm:"column(name)"`
 }
 
@@ -23,34 +23,34 @@ func TestCondition(t *testing.T) {
 	person := &Person{}
 	mi := newModelInfo(reflect.ValueOf(person))
 
-	sql := NewCondition().And("ID", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql := NewCondition().And("Id", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` = $0", sql, "exact failed")
 
-	sql = NewCondition().AndNot("ID", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().AndNot("Id", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "NOT `id` = $0", sql, "not exact failed")
 
-	sql = NewCondition().And("ID__lt", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__lt", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` < $0", sql, "lt failed")
 
-	sql = NewCondition().And("ID__lte", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__lte", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` <= $0", sql, "lte failed")
 
-	sql = NewCondition().And("ID__gt", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__gt", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` > $0", sql, "gt failed")
 
-	sql = NewCondition().And("ID__gte", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__gte", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` >= $0", sql, "gte failed")
 
-	sql = NewCondition().And("ID__eq", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__eq", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` = $0", sql, "eq failed")
 
-	sql = NewCondition().And("ID__ne", 10).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__ne", 10).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` <> $0", sql, "ne failed")
 
-	sql = NewCondition().And("ID__in", 10, 20, 30).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__in", 10, 20, 30).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` IN ($0, $1, $2)", sql, "in failed")
 
-	sql = NewCondition().And("ID__between", 10, 20).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id__between", 10, 20).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` BETWEEN $0 AND $1", sql, "between failed")
 
 	sql = NewCondition().And("Name__startswith", "zhang").GetWhereSQL(mi, newSqlBuilderCond())
@@ -77,9 +77,9 @@ func TestCondition(t *testing.T) {
 	sql = NewCondition().And("Name__isnull", false).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`name` IS NOT NULL", sql, "isnull(false) failed")
 
-	sql = NewCondition().And("ID", 1).And("Name", "zhang").GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id", 1).And("Name", "zhang").GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` = $0 AND `name` = $1", sql, "And().And() failed")
 
-	sql = NewCondition().And("ID", 1).OrCond(NewCondition().And("ID", 10).Or("name", "zhang")).GetWhereSQL(mi, newSqlBuilderCond())
+	sql = NewCondition().And("Id", 1).OrCond(NewCondition().And("Id", 10).Or("name", "zhang")).GetWhereSQL(mi, newSqlBuilderCond())
 	assert.Equal(t, "`id` = $0 OR (`id` = $1 OR `name` = $2)", sql, "And().OrCond(And().Or()) failed")
 }

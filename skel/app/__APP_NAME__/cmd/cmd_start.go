@@ -49,7 +49,7 @@ func startCmdFunc(_ *cobra.Command, _ []string) {
 	}()
 
 	// update pid
-	if err := app.UpdatePIDFile(config.Main.PIDFile); err != nil {
+	if err := app.UpdatePidFile(config.Main.PidFile); err != nil {
 		logger.Fatal("update pid failed", zap.Error(err))
 	}
 
@@ -60,7 +60,7 @@ func startCmdFunc(_ *cobra.Command, _ []string) {
 			logger.Fatal("panic", zap.Any("error", r), zap.Stack("stack"))
 		}
 
-		app.RemovePIDFile()
+		app.RemovePidFile()
 		logger.Info("server stopped")
 	}()
 
