@@ -5,6 +5,7 @@ import (
 	"path"
 
 	"github.com/stn81/kate/app"
+	"gopkg.in/ini.v1"
 )
 
 // Main is the log config instance
