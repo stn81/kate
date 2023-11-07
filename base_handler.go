@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/stn81/kate/log"
 	"net/http"
 	"strings"
 
 	"github.com/stn81/govalidator"
-	"github.com/stn81/kate/log/ctxzap"
 	"github.com/stn81/kate/utils"
 	"go.uber.org/zap"
 )
@@ -28,7 +28,7 @@ type BaseHandler struct{}
 
 // ParseRequest parses and validates the api request
 func (h *BaseHandler) ParseRequest(ctx context.Context, r *Request, req any) error {
-	logger := ctxzap.Extract(ctx)
+	logger := log.GetLogger(ctx)
 
 	// decode json
 	if r.ContentLength != 0 {
@@ -98,7 +98,7 @@ func (h *BaseHandler) Error(ctx context.Context, w http.ResponseWriter, err erro
 	}
 
 	if err := h.WriteJSON(w, result); err != nil {
-		ctxzap.Extract(ctx).Error("write json response", zap.Error(err))
+		log.GetLogger(ctx).Error("write json response", zap.Error(err))
 	}
 }
 
@@ -116,7 +116,7 @@ func (h *BaseHandler) OKData(ctx context.Context, w http.ResponseWriter, data an
 	}
 
 	if err := h.WriteJSON(w, result); err != nil {
-		ctxzap.Extract(ctx).Error("write json response", zap.Error(err))
+		log.GetLogger(ctx).Error("write json response", zap.Error(err))
 	}
 }
 

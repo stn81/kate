@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/stn81/kate/log"
 	"reflect"
 	"time"
 
-	"github.com/stn81/kate/log/ctxzap"
 	"go.uber.org/zap"
 )
 
@@ -308,7 +308,7 @@ func NewOrm(logger *zap.Logger) Ormer {
 	BootStrap() // execute only once
 
 	o := new(orm)
-	o.ctx = ctxzap.ToContext(context.TODO(), logger)
+	o.ctx = log.ToContext(context.TODO(), logger)
 	o.Using("default")
 	return o
 }

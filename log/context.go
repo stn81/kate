@@ -1,4 +1,4 @@
-package ctxzap
+package log
 
 import (
 	"context"
@@ -14,10 +14,10 @@ var (
 	nullLogger   = zap.NewNop()
 )
 
-// Extract takes the call-scoped Logger from grpc_zap middleware.
+// GetLogger takes the call-scoped Logger from grpc_zap middleware.
 //
 // It always returns a Logger that has all the grpc_ctxtags updated.
-func Extract(ctx context.Context) *zap.Logger {
+func GetLogger(ctx context.Context) *zap.Logger {
 	if logger, ok := ctx.Value(ctxMarkerKey).(*zap.Logger); ok {
 		return logger
 	}
@@ -33,5 +33,5 @@ func ToContext(ctx context.Context, logger *zap.Logger) context.Context {
 
 // With append logging fields to context
 func With(ctx context.Context, fields ...zapcore.Field) context.Context {
-	return ToContext(ctx, Extract(ctx).With(fields...))
+	return ToContext(ctx, GetLogger(ctx).With(fields...))
 }

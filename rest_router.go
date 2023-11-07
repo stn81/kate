@@ -2,9 +2,9 @@ package kate
 
 import (
 	"context"
+	"github.com/stn81/kate/log"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/stn81/kate/log/ctxzap"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +19,7 @@ type RESTRouter struct {
 func NewRESTRouter(ctx context.Context, logger *zap.Logger) *RESTRouter {
 	r := &RESTRouter{
 		Router: httprouter.New(),
-		ctx:    ctxzap.ToContext(ctx, logger),
+		ctx:    log.ToContext(ctx, logger),
 	}
 	r.Router.RedirectTrailingSlash = false
 	r.Router.RedirectFixedPath = false

@@ -3,9 +3,9 @@ package orm
 import (
 	"context"
 	"database/sql"
+	"github.com/stn81/kate/log"
 	"time"
 
-	"github.com/stn81/kate/log/ctxzap"
 	"go.uber.org/zap"
 )
 
@@ -21,7 +21,7 @@ func debugLogQueies(
 	var (
 		elapsed = int64(time.Since(t) / time.Millisecond)
 		flag    = "OK"
-		logger  = ctxzap.Extract(ctx).With(defaultLoggerTag)
+		logger  = log.GetLogger(ctx).With(defaultLoggerTag)
 	)
 
 	if err != nil {

@@ -2,9 +2,9 @@ package kate
 
 import (
 	"context"
+	"github.com/stn81/kate/log"
 	"net/http"
 
-	"github.com/stn81/kate/log/ctxzap"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +19,7 @@ type Router struct {
 func NewRouter(ctx context.Context, logger *zap.Logger) *Router {
 	return &Router{
 		ServeMux: http.NewServeMux(),
-		ctx:      ctxzap.ToContext(ctx, logger),
+		ctx:      log.ToContext(ctx, logger),
 	}
 }
 

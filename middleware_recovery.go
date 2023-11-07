@@ -2,9 +2,9 @@ package kate
 
 import (
 	"context"
+	"github.com/stn81/kate/log"
 	"net/http"
 
-	"github.com/stn81/kate/log/ctxzap"
 	"go.uber.org/zap"
 )
 
@@ -15,7 +15,7 @@ func Recovery(h ContextHandler) ContextHandler {
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
-				ctxzap.Extract(ctx).Error("got panic", zap.Any("error", err), zap.Stack("stack"))
+				log.GetLogger(ctx).Error("got panic", zap.Any("error", err), zap.Stack("stack"))
 			}
 		}()
 

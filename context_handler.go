@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"github.com/stn81/kate/log"
 	"io"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/stn81/kate/log/ctxzap"
 	"go.uber.org/zap"
 )
 
@@ -33,7 +33,7 @@ func Handle(ctx context.Context, h ContextHandler, maxBodyBytes int64) httproute
 			response       *responseWriter
 			err            error
 			newctx, cancel = context.WithCancel(ctx)
-			logger         = ctxzap.Extract(ctx)
+			logger         = log.GetLogger(ctx)
 		)
 
 		defer cancel()
@@ -84,7 +84,7 @@ func StdHandler(ctx context.Context, h ContextHandler, maxBodyBytes int64) http.
 			response       *responseWriter
 			err            error
 			newctx, cancel = context.WithCancel(ctx)
-			logger         = ctxzap.Extract(ctx)
+			logger         = log.GetLogger(ctx)
 		)
 
 		defer cancel()
