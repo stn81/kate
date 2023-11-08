@@ -31,6 +31,11 @@ func newCachedProxy(size int, ttl time.Duration) *cachedProxy {
 
 func (p *cachedProxy) Proxy(h ContextHandler) ContextHandler {
 	f := func(ctx context.Context, w ResponseWriter, r *Request) {
+		if r.Form.Get("nocache") != "" {
+			h.ServeHTTP(ctx, w, r)
+			return
+		}
+
 		var (
 			logger   = log.GetLogger(ctx)
 			cacheKey = p.getCacheKey(r)
