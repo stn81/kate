@@ -26,7 +26,7 @@ func (c Chain) Then(h ContextHandler) ContextHandler {
 	final := h
 
 	for i := len(c.middlewares) - 1; i >= 0; i-- {
-		final = c.middlewares[i](final)
+		final = c.middlewares[i].Proxy(final)
 	}
 
 	return final

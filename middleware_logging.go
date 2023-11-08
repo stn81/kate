@@ -28,5 +28,5 @@ func Logging(logger *zap.Logger) Middleware {
 		}
 		return ContextHandlerFunc(f)
 	}
-	return mf
+	return MiddlewareFunc(mf)
 }

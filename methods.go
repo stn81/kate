@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// MethodOnly is a middleware to restrict http method for standard http router
+// MethodOnly is used to restrict http method for standard http router
 func MethodOnly(method string, h ContextHandler) ContextHandler {
 	f := func(ctx context.Context, w ResponseWriter, r *Request) {
 		if strings.ToUpper(r.Method) != method {

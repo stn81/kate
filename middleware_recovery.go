@@ -9,7 +9,9 @@ import (
 )
 
 // Recovery implements the recovery wrapper middleware
-func Recovery(h ContextHandler) ContextHandler {
+var Recovery = MiddlewareFunc(recoveryFunc)
+
+func recoveryFunc(h ContextHandler) ContextHandler {
 	f := func(ctx context.Context, w ResponseWriter, r *Request) {
 		defer func() {
 			if err := recover(); err != nil {

@@ -9,7 +9,9 @@ import (
 
 const HeaderTraceId = "X-Trace-Id"
 
-func TraceId(h ContextHandler) ContextHandler {
+var TraceId = MiddlewareFunc(traceIdFunc)
+
+func traceIdFunc(h ContextHandler) ContextHandler {
 	f := func(ctx context.Context, w ResponseWriter, r *Request) {
 		var (
 			traceId = r.Header.Get(HeaderTraceId)
