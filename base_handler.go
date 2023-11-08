@@ -97,37 +97,37 @@ func (h *BaseHandler) Error(ctx context.Context, w http.ResponseWriter, err erro
 		result.Data = errInfoWithData.Data()
 	}
 
-	if err := h.WriteJSON(w, result); err != nil {
+	if err := h.WriteJson(w, result); err != nil {
 		log.GetLogger(ctx).Error("write json response", zap.Error(err))
 	}
 }
 
-// OK writes out a success response without data, used typically in an `update` api.
-func (h *BaseHandler) OK(ctx context.Context, w http.ResponseWriter) {
-	h.OKData(ctx, w, nil)
+// Ok writes out a success response without data, used typically in an `update` api.
+func (h *BaseHandler) Ok(ctx context.Context, w http.ResponseWriter) {
+	h.OkData(ctx, w, nil)
 }
 
-// OKData writes out a success response with data, used typically in an `get` api.
-func (h *BaseHandler) OKData(ctx context.Context, w http.ResponseWriter, data any) {
+// OkData writes out a success response with data, used typically in an `get` api.
+func (h *BaseHandler) OkData(ctx context.Context, w http.ResponseWriter, data any) {
 	result := &Result{
 		ErrNO:  ErrSuccess.Code(),
 		ErrMsg: ErrSuccess.Error(),
 		Data:   data,
 	}
 
-	if err := h.WriteJSON(w, result); err != nil {
+	if err := h.WriteJson(w, result); err != nil {
 		log.GetLogger(ctx).Error("write json response", zap.Error(err))
 	}
 }
 
-// EncodeJSON is a wrapper of json.Marshal()
-func (h *BaseHandler) EncodeJSON(v any) ([]byte, error) {
+// EncodeJson is a wrapper of json.Marshal()
+func (h *BaseHandler) EncodeJson(v any) ([]byte, error) {
 	return json.Marshal(v)
 }
 
-// WriteJSON writes out an object which is serialized as json.
-func (h *BaseHandler) WriteJSON(w http.ResponseWriter, v any) error {
-	b, err := h.EncodeJSON(v)
+// WriteJson writes out an object which is serialized as json.
+func (h *BaseHandler) WriteJson(w http.ResponseWriter, v any) error {
+	b, err := h.EncodeJson(v)
 	if err != nil {
 		return err
 	}

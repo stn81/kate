@@ -10,5 +10,5 @@ type HelloHandler struct {
 }
 
 func (h *HelloHandler) ServeHTTP(ctx context.Context, w kate.ResponseWriter, r *kate.Request) {
-	h.OKData(ctx, w, "hello world")
+	h.OkData(ctx, w, "hello world")
 }
