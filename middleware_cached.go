@@ -3,26 +3,26 @@ package kate
 import (
 	"bytes"
 	"context"
-	"fmt"
-	lru "github.com/hashicorp/golang-lru/v2"
+	"github.com/hashicorp/golang-lru/v2/expirable"
 	"github.com/stn81/kate/log"
 	"net/http"
+	"time"
 )
 
-const CacheSize = 1024
+const (
+	CacheSize = 1024
+	CacheTtl  = time.Minute * time.Duration(5)
+)
 
 type responseInfo struct {
 	Header http.Header
 	Body   []byte
 }
 
-var responseCache *lru.Cache[string, *responseInfo]
+var responseCache *expirable.LRU[string, *responseInfo]
 
 func init() {
-	var err error
-	if responseCache, err = lru.New[string, *responseInfo](CacheSize); err != nil {
-		panic(fmt.Errorf("failed to init response cache: %w", err))
-	}
+	responseCache = expirable.NewLRU[string, *responseInfo](CacheSize, nil, CacheTtl)
 }
 
 func getCacheKey(r *Request) string {
@@ -54,7 +54,7 @@ func Cached(h ContextHandler) ContextHandler {
 					w.Header().Add(key, v)
 				}
 			}
-			w.Write(response.Body)
+			_, _ = w.Write(response.Body)
 			return
 		}
 
