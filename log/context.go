@@ -14,9 +14,7 @@ var (
 	nullLogger   = zap.NewNop()
 )
 
-// GetLogger takes the call-scoped Logger from grpc_zap middleware.
-//
-// It always returns a Logger that has all the grpc_ctxtags updated.
+// GetLogger retrieve the logger in context.
 func GetLogger(ctx context.Context) *zap.Logger {
 	if logger, ok := ctx.Value(ctxMarkerKey).(*zap.Logger); ok {
 		return logger
@@ -26,7 +24,6 @@ func GetLogger(ctx context.Context) *zap.Logger {
 }
 
 // ToContext adds the zap.Logger to the context for extraction later.
-// Returning the new context that has been created.
 func ToContext(ctx context.Context, logger *zap.Logger) context.Context {
 	return context.WithValue(ctx, ctxMarkerKey, logger)
 }
