@@ -1,6 +1,7 @@
 package timerengine
 
 import (
+	"context"
 	"sync"
 
 	"go.uber.org/zap"
@@ -8,15 +9,15 @@ import (
 
 // Task define the Task interface runned by timer engine
 type Task interface {
-	Run()
+	Run(ctx context.Context)
 }
 
 // TaskFunc define the task func type
-type TaskFunc func()
+type TaskFunc func(ctx context.Context)
 
 // Run adapt the TaskFunc to taskengine.Task interface
-func (f TaskFunc) Run() {
-	f()
+func (f TaskFunc) Run(ctx context.Context) {
+	f(ctx)
 }
 
 // TimerTask define the timer task
@@ -80,7 +81,7 @@ func (timerTask *TimerTask) dispose() {
 	timerTask.Unlock()
 
 	if ok {
-		timerTask.engine.execute(func() {
+		timerTask.engine.execute(func(ctx context.Context) {
 			defer func() {
 				if r := recover(); r != nil {
 					timerTask.engine.logger.Error("got panic", zap.Any("error", r), zap.Stack("stack"))
@@ -88,7 +89,7 @@ func (timerTask *TimerTask) dispose() {
 			}()
 
 			if timerTask.task != nil {
-				timerTask.task.Run()
+				timerTask.task.Run(ctx)
 			}
 		})
 	}

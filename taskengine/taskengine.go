@@ -37,7 +37,7 @@ func New(ctx context.Context, name string, concurrencyLevel int, logger *zap.Log
 	return engine
 }
 
-// Schedule schedule a task running on engine
+// Schedule a task running on engine
 func (engine *TaskEngine) Schedule(task Task) bool {
 	if engine.shutdown {
 		engine.logger.Error("already stopped, should not schedule new task")
@@ -68,7 +68,7 @@ func (engine *TaskEngine) run(task Task) {
 		engine.Done()
 	}()
 
-	task.Run()
+	task.Run(engine.ctx)
 }
 
 // Shutdown stop the task engine
