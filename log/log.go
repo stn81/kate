@@ -1,7 +1,7 @@
 package log
 
 import (
-	"example/log/encoders/simple"
+	"github.com/stn81/kate/log/encoders/simple"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
