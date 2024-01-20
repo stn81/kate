@@ -5,8 +5,6 @@ import (
 	"os"
 	"path"
 	"strconv"
-
-	"github.com/kardianos/osext"
 )
 
 var (
@@ -23,7 +21,7 @@ func init() {
 		err error
 	)
 
-	if bin, err = osext.Executable(); err != nil {
+	if bin, err = os.Executable(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "ERROR: get executable path, reason=%v\n", err)
 		os.Exit(1)
 	}
