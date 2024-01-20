@@ -9,7 +9,3 @@ import (
 func NewSink(u *url.URL) (zap.Sink, error) {
 	return NewWriter(u.Path)
 }
-
-func init() {
-	_ = zap.RegisterSink("rfile", NewSink)
-}

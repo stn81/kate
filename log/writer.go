@@ -2,21 +2,21 @@ package log
 
 import (
 	"context"
-	"fmt"
 	"os"
-	"os/signal"
 	"sync"
-	"syscall"
+	"time"
 )
 
 var (
-	RotateSignal = syscall.SIGUSR1
-	OpenFlag     = os.O_CREATE | os.O_APPEND | os.O_WRONLY
-	OpenPerm     = os.FileMode(0644)
+	OpenFlag = os.O_CREATE | os.O_APPEND | os.O_WRONLY
+	OpenPerm = os.FileMode(0644)
 )
+
+var MaxRotateCount = 7
 
 type Writer struct {
 	location string
+	lock     sync.RWMutex
 	file     *os.File
 	wg       sync.WaitGroup
 	ctx      context.Context
@@ -39,12 +39,15 @@ func NewWriter(location string) (*Writer, error) {
 	}
 
 	w.wg.Add(1)
-	go w.startRotateListener()
+	go w.rotateLoop()
 
 	return w, nil
 }
 
 func (w *Writer) Write(p []byte) (n int, err error) {
+	w.lock.RLock()
+	defer w.lock.RUnlock()
+
 	return w.file.Write(p)
 }
 
@@ -58,40 +61,91 @@ func (w *Writer) Close() error {
 	return w.file.Close()
 }
 
-func (w *Writer) startRotateListener() {
+func (w *Writer) rotateLoop() {
 	defer func() {
 		w.wg.Done()
 	}()
 
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, RotateSignal)
-
+	ticker := time.NewTicker(1 * time.Second)
+	lastTickDay := time.Now().Day()
 	for {
 		select {
-		case <-w.ctx.Done():
-			return
-		case sig := <-ch:
-			if sig == RotateSignal {
+		case now := <-ticker.C:
+			today := now.Day()
+			if today != lastTickDay {
+				lastTickDay = today
 				w.rotate()
 			}
+		case <-w.ctx.Done():
+			return
 		}
 	}
+
 }
 
 func (w *Writer) rotate() {
-	file, err := os.OpenFile(w.location, OpenFlag, OpenPerm)
+	var (
+		dstFile = w.location + "." + w.getPrevDaySuffix(1)
+		srcFile = w.location
+		err     error
+	)
+
+	if exists, _ := w.isFileExists(srcFile); exists {
+		//#ifdef DEBUG
+		_, _ = os.Stderr.WriteString("rotating " + srcFile + " => " + dstFile + "\n")
+		//#endif
+
+		if err := os.Rename(srcFile, dstFile); err != nil {
+			//#ifdef DEBUG
+			_, _ = os.Stderr.WriteString("failed to rotate: srcFile=" + srcFile +
+				", dstFile=" + dstFile + ", error=" + err.Error() + "\n")
+			//#endif
+			os.Exit(-1)
+			return
+		}
+	}
+
+	maxRotateFile := w.location + "." + w.getPrevDaySuffix(MaxRotateCount+1)
+	if exists, _ := w.isFileExists(maxRotateFile); exists {
+		//#ifdef DEBUG
+		_, _ = os.Stderr.WriteString("removing " + maxRotateFile + "\n")
+		//#endif
+		_ = os.Remove(maxRotateFile)
+	}
+
+	w.lock.Lock()
+	defer w.lock.Unlock()
+
+	if err = w.file.Close(); err != nil {
+		//#ifdef DEBUG
+		_, _ = os.Stderr.WriteString("ERROR: failed to close log file \"" +
+			w.location + "\", reason=" + err.Error() + "\n")
+		//#endif
+		os.Exit(-1)
+		return
+	}
+
+	w.file, err = os.OpenFile(w.location, OpenFlag, OpenPerm)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to rotate log file \"%s\", reopen, reason=%v", w.location, err)
+		//#ifdef DEBUG
+		_, _ = os.Stderr.WriteString("ERROR: failed to rotate log file \"" +
+			w.location + "\", reopen, reason=" + err.Error() + "\n")
+		//#endif
+		os.Exit(-1)
 		return
 	}
+}
 
-	if err = syscall.Dup2(int(file.Fd()), int(w.file.Fd())); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to rotate log file \"%s\", dup2(), reason=%v", w.location, err)
-		return
+func (w *Writer) isFileExists(fileName string) (exists bool, err error) {
+	if _, err = os.Stat(fileName); err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
 	}
+	return true, nil
+}
 
-	if err = file.Close(); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to close log file \"%s\", close(), reason=%v", w.location, err)
-		return
-	}
+func (w *Writer) getPrevDaySuffix(i int) string {
+	return time.Now().Add(-time.Hour * time.Duration(i) * 24).Format("20060102")
 }

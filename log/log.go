@@ -1,14 +1,10 @@
 package log
 
 import (
-	"fmt"
-	"os"
-	"path"
+	"example/log/encoders/simple"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-
-	"github.com/stn81/kate/app"
 )
 
 // MustNewCoreWithLevelOnly create core only handle specified level
@@ -45,4 +41,11 @@ func MustNewCoreWithLevelAbove(level zapcore.Level, location string, enc zapcore
 	}
 
 	return zapcore.NewCore(enc, writer, level)
+}
+
+func init() {
+	_ = zap.RegisterEncoder("simple", func(config zapcore.EncoderConfig) (encoder zapcore.Encoder, e error) {
+		return simple.NewEncoder(), nil
+	})
+	_ = zap.RegisterSink("rfile", NewSink)
 }

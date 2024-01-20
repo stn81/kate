@@ -11,7 +11,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/modern-go/gls"
-	"go.uber.org/zap"
 	"go.uber.org/zap/buffer"
 	"go.uber.org/zap/zapcore"
 )
@@ -485,10 +484,4 @@ func (enc *encoder) addFields(fields []zapcore.Field) {
 	for i := range fields {
 		fields[i].AddTo(enc)
 	}
-}
-
-func init() {
-	_ = zap.RegisterEncoder("simple", func(config zapcore.EncoderConfig) (encoder zapcore.Encoder, e error) {
-		return NewEncoder(), nil
-	})
 }
