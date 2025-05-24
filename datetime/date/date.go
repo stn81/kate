@@ -10,8 +10,6 @@ type Date struct {
 	time.Time
 }
 
-const Day = time.Hour * time.Duration(24)
-
 func Today() Date {
 	return FromTime(time.Now())
 }
@@ -27,14 +25,34 @@ func New(year, month, day int) Date {
 	}
 }
 
-func (dt Date) Prev(days int) Date {
-	return dt.Next(-days)
+func (dt Date) NextDay(days int) Date {
+	return Date{
+		Time: dt.Time.AddDate(0, 0, days),
+	}
 }
 
-func (dt Date) Next(days int) Date {
+func (dt Date) PrevDay(days int) Date {
+	return dt.NextDay(-days)
+}
+
+func (dt Date) NextMonth(months int) Date {
 	return Date{
-		Time: dt.Time.Add(Day * time.Duration(days)),
+		Time: dt.Time.AddDate(0, months, 0),
 	}
+}
+
+func (dt Date) PrevMonth(months int) Date {
+	return dt.NextMonth(-months)
+}
+
+func (dt Date) NextYear(years int) Date {
+	return Date{
+		Time: dt.Time.AddDate(years, 0, 0),
+	}
+}
+
+func (dt Date) PrevYear(years int) Date {
+	return dt.NextYear(-years)
 }
 
 func (dt *Date) UnmarshalBind(value string) error {
