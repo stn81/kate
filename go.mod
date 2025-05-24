@@ -10,7 +10,6 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/modern-go/gls v0.0.0-20220109145502-612d0167dce5
 	github.com/redis/go-redis/v9 v9.3.0
 	github.com/rogpeppe/fastuuid v1.2.0

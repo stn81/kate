@@ -1,7 +1,11 @@
 package log
 
 import (
+	"fmt"
+	"github.com/stn81/kate/app"
 	"github.com/stn81/kate/log/encoders/simple"
+	"os"
+	"path"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
