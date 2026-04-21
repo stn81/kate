@@ -2,8 +2,9 @@ package rdb
 
 import (
 	"context"
-	"github.com/redis/go-redis/v9"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -27,6 +28,7 @@ type Client interface {
 type Config struct {
 	Addrs           []string
 	DB              int
+	Username        string
 	Password        string
 	ClusterEnabled  bool
 	ReadOnly        bool
@@ -62,6 +64,7 @@ func newClient(conf *Config) *redis.Client {
 	opt := &redis.Options{
 		Addr:            conf.Addrs[0],
 		DB:              conf.DB,
+		Username:        conf.Username,
 		Password:        conf.Password,
 		MaxRetries:      conf.MaxRetries,
 		MinRetryBackoff: conf.MinRetryBackoff,
@@ -83,6 +86,7 @@ func newClient(conf *Config) *redis.Client {
 func newClusterClient(conf *Config) *redis.ClusterClient {
 	opt := &redis.ClusterOptions{
 		Addrs:           conf.Addrs,
+		Username:        conf.Username,
 		Password:        conf.Password,
 		MaxRedirects:    conf.MaxRedirects,
 		MaxRetries:      conf.MaxRetries,
