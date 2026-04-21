@@ -200,7 +200,7 @@ func GetByteArray(v any) []byte {
 }
 
 // SliceAny convert to []T to []any
-func SliceAny[T any](keys []string) []any {
+func SliceAny[T any](keys []T) []any {
 	result := make([]any, len(keys))
 	for i, k := range keys {
 		result[i] = k
