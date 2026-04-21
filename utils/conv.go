@@ -199,8 +199,8 @@ func GetByteArray(v any) []byte {
 	}
 }
 
-// StringsToInterfaces convert to []string to []interface{}
-func StringsToInterfaces(keys []string) []any {
+// SliceAny convert to []T to []any
+func SliceAny[T ](keys []string) []any {
 	result := make([]any, len(keys))
 	for i, k := range keys {
 		result[i] = k
