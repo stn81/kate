@@ -80,3 +80,11 @@ func JoinSlice(slice any, sep string) string {
 
 	return b.String()
 }
+
+// PrependSlice prepend a value at the head of slice
+func PrependSlice[T any](slice []T, value T) []T {
+	result := make([]T, 0, len(slice)+1)
+	result = append(result, value)
+	result = append(result, slice...)
+	return result
+}
