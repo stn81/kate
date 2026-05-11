@@ -1,1 +1,1 @@
-kate service framework
+kate service framework.
