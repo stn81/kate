@@ -57,7 +57,11 @@ func (dt Date) PrevYear(years int) Date {
 
 func (dt *Date) UnmarshalBind(value string) error {
 	var err error
-	if dt.Time, err = time.Parse(time.DateOnly, value); err != nil {
+	// 用 ParseInLocation + time.Local，与 New() 构造的 Date 保持同一时区基准。
+	// time.Parse 在 layout 不含时区指示时默认返回 UTC（见 https://pkg.go.dev/time#Parse），
+	// 那样 "2026-05-25" 解析出来是 UTC 0:00，与 New(2026,5,25) 出来的 Local 0:00
+	// 在非 UTC 时区下差一个时区偏移量，After/Before/Equal/Sub 会全部错位。
+	if dt.Time, err = time.ParseInLocation(time.DateOnly, value, time.Local); err != nil {
 		return err
 	}
 	return nil
@@ -93,7 +97,8 @@ func (dt *Date) UnmarshalJSON(data []byte) error {
 		return errors.New("Date.UnmarshalJSON: input is not a JSON string")
 	}
 	data = data[len(`"`) : len(data)-len(`"`)]
-	t, err := time.Parse(time.DateOnly, string(data))
+	// 同 UnmarshalBind：用 ParseInLocation + time.Local 与 New() 对齐时区。
+	t, err := time.ParseInLocation(time.DateOnly, string(data), time.Local)
 	if err != nil {
 		return err
 	}
