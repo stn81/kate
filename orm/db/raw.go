@@ -255,8 +255,7 @@ func ExecRaw(ctx context.Context, exe Executor, rq RawQuery) (Result, error) {
 }
 
 func buildRaw(exe Executor, rq RawQuery) (string, []any, error) {
-	f := exe.flavorOf()
-	return rq.Build(flavorAdapter{f})
+	return rq.Build(exe.flavorOf())
 }
 
 // ----- forward sentinel for ergonomic import (db.Flavor type alias) -----

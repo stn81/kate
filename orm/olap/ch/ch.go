@@ -61,7 +61,7 @@ func FromSubquery(sub *ksql.SelectBuilder, alias string) *SelectBuilder {
 	// TableRef pointed at a virtual table — we leverage CTE-style emit.
 	// Simplest correct route: turn sub into a single-CTE attachment and
 	// FROM the CTE alias.
-	cte := ksql.NewCTE[any](alias, sub)
+	cte := ksql.NewCTE(alias, sub)
 	b := &SelectBuilder{inner: ksql.From(ksql.NewVirtualTable(alias)).With(cte)}
 	b.inner = b.inner.WithExtension(b.extension())
 	return b
@@ -152,10 +152,10 @@ func (b *SelectBuilder) OrderBy(terms ...ksql.OrderTerm) *SelectBuilder {
 }
 func (b *SelectBuilder) Limit(n int64) *SelectBuilder  { return b.replace(b.inner.Limit(n)) }
 func (b *SelectBuilder) Offset(n int64) *SelectBuilder { return b.replace(b.inner.Offset(n)) }
-func (b *SelectBuilder) With(c ksql.AnyCTE) *SelectBuilder {
+func (b *SelectBuilder) With(c *ksql.CTE) *SelectBuilder {
 	return b.replace(b.inner.With(c))
 }
-func (b *SelectBuilder) WithMany(cs ...ksql.AnyCTE) *SelectBuilder {
+func (b *SelectBuilder) WithMany(cs ...*ksql.CTE) *SelectBuilder {
 	return b.replace(b.inner.WithMany(cs...))
 }
 

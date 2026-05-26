@@ -10,19 +10,9 @@ import (
 	ksql "github.com/stn81/kate/orm/sql"
 )
 
-// flavorWrap exposes the clickhouse package's value through the ksql.Flavor
-// interface (the test package can't depend on db).
-type flavorWrap struct{}
-
-func (flavorWrap) Name() string             { return clickhouse.Flavor.Name() }
-func (flavorWrap) Quote(s string) string    { return clickhouse.Flavor.Quote(s) }
-func (flavorWrap) Placeholder(i int) string { return clickhouse.Flavor.Placeholder(i) }
-func (flavorWrap) SupportsCTE() bool        { return clickhouse.Flavor.SupportsCTE() }
-func (flavorWrap) SupportsReturning() bool  { return clickhouse.Flavor.SupportsReturning() }
-
-// IsClickHouse identifies this wrap as the CK flavor for builders that
-// type-assert for CK-only features.
-func (flavorWrap) IsClickHouse() {}
+// chFlavor is the clickhouse package's flavor value, used directly as
+// ksql.Flavor (now a type alias of flavor.Flavor).
+var chFlavor = clickhouse.Flavor
 
 var statTable = struct {
 	Ref     ksql.TableRef
@@ -40,10 +30,10 @@ var statTable = struct {
 func TestCh_Final(t *testing.T) {
 	q := ch.From(statTable.Ref).
 		Final().
-		Select(ksql.Erase(statTable.Userid)).
+		Select(statTable.Userid).
 		Where(statTable.Date.Eq(20260101))
 
-	got, _, err := q.Build(flavorWrap{})
+	got, _, err := q.Build(chFlavor)
 	if err != nil {
 		t.Fatalf("Build: %v", err)
 	}
@@ -55,11 +45,11 @@ func TestCh_Final(t *testing.T) {
 // TestCh_Prewhere verifies PREWHERE precedes WHERE.
 func TestCh_Prewhere(t *testing.T) {
 	q := ch.From(statTable.Ref).
-		Select(ksql.Erase(statTable.Userid)).
+		Select(statTable.Userid).
 		Prewhere(statTable.Date.Eq(20260101)).
 		Where(statTable.Revenue.Gt(0.0))
 
-	got, _, err := q.Build(flavorWrap{})
+	got, _, err := q.Build(chFlavor)
 	if err != nil {
 		t.Fatalf("Build: %v", err)
 	}
@@ -74,10 +64,10 @@ func TestCh_Prewhere(t *testing.T) {
 // key order.
 func TestCh_Settings(t *testing.T) {
 	q := ch.From(statTable.Ref).
-		Select(ksql.Erase(statTable.Userid)).
+		Select(statTable.Userid).
 		Settings(map[string]any{"max_threads": 4, "join_algorithm": "hash"})
 
-	got, args, err := q.Build(flavorWrap{})
+	got, args, err := q.Build(chFlavor)
 	if err != nil {
 		t.Fatalf("Build: %v", err)
 	}
@@ -102,14 +92,14 @@ func TestCh_BitmapPipeline(t *testing.T) {
 	merged := chexpr.BitmapAnd(bmA, bmB)
 	// SELECT arrayJoin(bitmapToArray(bitmapAnd(bm_a, bm_b)))
 	uidsSub := ch.SelectLiteral().Select(
-		ksql.Erase(chexpr.ArrayJoin[uint64](chexpr.BitmapToArray(merged))),
+		chexpr.ArrayJoin[uint64](chexpr.BitmapToArray(merged)),
 	)
 
 	q := ch.From(statTable.Ref).
-		Select(ksql.Erase(statTable.Userid)).
+		Select(statTable.Userid).
 		Where(ksql.InSubquery(statTable.Userid, uidsSub.Inner()))
 
-	got, _, err := q.Build(flavorWrap{})
+	got, _, err := q.Build(chFlavor)
 	if err != nil {
 		t.Fatalf("Build: %v", err)
 	}

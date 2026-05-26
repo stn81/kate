@@ -26,12 +26,12 @@ func (s subqueryExpr[T]) As(alias string) Expr[T] {
 // InSubquery builds `col IN (SELECT ...)` for a typed column. The subquery
 // must project a single column of type T.
 func InSubquery[T any](c Col[T], sb *SelectBuilder) Predicate {
-	return inSubP{left: stripAlias[T](c), sub: sb}
+	return inSubP{left: c, sub: sb}
 }
 
 // NotInSubquery builds `col NOT IN (SELECT ...)`.
 func NotInSubquery[T any](c Col[T], sb *SelectBuilder) Predicate {
-	return inSubP{left: stripAlias[T](c), sub: sb, not: true}
+	return inSubP{left: c, sub: sb, not: true}
 }
 
 // InSubqueryExpr is the expr-on-LHS form of InSubquery, useful when the

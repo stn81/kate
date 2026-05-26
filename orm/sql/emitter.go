@@ -2,19 +2,13 @@ package sql
 
 import (
 	"strings"
+
+	"github.com/stn81/kate/orm/flavor"
 )
 
-// Flavor is the dialect protocol consumed by Emitter. The concrete
-// flavor.Flavor interface lives in the flavor package and embeds this; we
-// duplicate the minimum here to break the import cycle (sql cannot depend
-// on flavor since flavor needs to refer to Emitter / Predicate / Expr).
-type Flavor interface {
-	Name() string
-	Quote(ident string) string
-	Placeholder(i int) string
-	SupportsCTE() bool
-	SupportsReturning() bool
-}
+// Flavor is the dialect protocol consumed by Emitter. Alias of flavor.Flavor
+// so call sites can use sql.Flavor without an extra import.
+type Flavor = flavor.Flavor
 
 // Emitter accumulates SQL text and parameter values as a Builder walks its
 // AST. It is the single sink for SQL text — no AST node writes to anything

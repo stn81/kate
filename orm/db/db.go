@@ -251,23 +251,10 @@ func (db *DB) activeHooks() []Hook              { return db.hooks }
 // ----- shared build path -----
 
 // buildQuery compiles a ksql.Builder against the executor's flavor.
-// Adapts the flavor.Flavor → ksql.Flavor interface (they're structurally
-// identical; the two-package definition exists to break the import cycle
-// between sql and flavor).
+// sql.Flavor is an alias of flavor.Flavor so no adapter needed.
 func buildQuery(exe Executor, b ksql.Builder) (string, []any, error) {
-	f := exe.flavorOf()
-	// flavor.Flavor and ksql.Flavor have identical methods; pass through.
-	adapter := flavorAdapter{f}
-	return b.Build(adapter)
+	return b.Build(exe.flavorOf())
 }
-
-type flavorAdapter struct{ f flavor.Flavor }
-
-func (a flavorAdapter) Name() string                  { return a.f.Name() }
-func (a flavorAdapter) Quote(ident string) string     { return a.f.Quote(ident) }
-func (a flavorAdapter) Placeholder(i int) string      { return a.f.Placeholder(i) }
-func (a flavorAdapter) SupportsCTE() bool             { return a.f.SupportsCTE() }
-func (a flavorAdapter) SupportsReturning() bool       { return a.f.SupportsReturning() }
 
 // firePostQuery notifies hooks of a successful query.
 func firePostQuery(exe Executor, ctx context.Context, op, q string, args []any, dur time.Duration) {

@@ -9,7 +9,7 @@ package sql
 // *sql.SelectBuilder. The CK variant injects its own clauses through
 // EmitExtension hooks during Build.
 type SelectBuilder struct {
-	ctes     []AnyCTE
+	ctes     []*CTE
 	distinct bool
 
 	selectCols []AnyExpr
@@ -80,7 +80,7 @@ func (b *SelectBuilder) WithExtension(ext SelectExtension) *SelectBuilder {
 // internally so callers rarely need this; exposed for the ch upgrade path.
 func (b *SelectBuilder) Clone() *SelectBuilder {
 	out := *b
-	out.ctes = append([]AnyCTE(nil), b.ctes...)
+	out.ctes = append([]*CTE(nil), b.ctes...)
 	out.selectCols = append([]AnyExpr(nil), b.selectCols...)
 	out.joins = append([]joinTerm(nil), b.joins...)
 	out.whereExprs = append([]Predicate(nil), b.whereExprs...)
@@ -244,14 +244,14 @@ func (b *SelectBuilder) Offset(n int64) *SelectBuilder {
 }
 
 // With attaches a CTE. Multiple calls accumulate.
-func (b *SelectBuilder) With(c AnyCTE) *SelectBuilder {
+func (b *SelectBuilder) With(c *CTE) *SelectBuilder {
 	out := b.Clone()
 	out.ctes = append(out.ctes, c)
 	return out
 }
 
 // WithMany attaches several CTEs at once.
-func (b *SelectBuilder) WithMany(cs ...AnyCTE) *SelectBuilder {
+func (b *SelectBuilder) WithMany(cs ...*CTE) *SelectBuilder {
 	out := b.Clone()
 	out.ctes = append(out.ctes, cs...)
 	return out

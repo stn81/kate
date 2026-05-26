@@ -126,7 +126,7 @@ func (bi *BatchInserter[T]) Send(ctx context.Context) (int64, error) {
 // template that the CK driver's PrepareBatch path consumes.
 func (bi *BatchInserter[T]) buildInsertStmt() (string, error) {
 	f := bi.db.Flavor()
-	em := ksql.NewEmitter(&flavorPassthrough{f: f})
+	em := ksql.NewEmitter(f)
 	em.WriteString("INSERT INTO ")
 	if bi.table.Schema() != "" {
 		em.WriteString(f.Quote(bi.table.Schema()))
@@ -310,15 +310,6 @@ func colName(c ksql.AnyCol) string {
 	}
 	return s
 }
-
-// flavorPassthrough adapts the db.Flavor interface to ksql.Flavor.
-type flavorPassthrough struct{ f interface{ Name() string; Quote(string) string; Placeholder(int) string; SupportsCTE() bool; SupportsReturning() bool } }
-
-func (p *flavorPassthrough) Name() string             { return p.f.Name() }
-func (p *flavorPassthrough) Quote(s string) string    { return p.f.Quote(s) }
-func (p *flavorPassthrough) Placeholder(i int) string { return p.f.Placeholder(i) }
-func (p *flavorPassthrough) SupportsCTE() bool        { return p.f.SupportsCTE() }
-func (p *flavorPassthrough) SupportsReturning() bool  { return p.f.SupportsReturning() }
 
 // WaitMutation polls system.mutations for completion of a mutation id.
 // Currently a thin placeholder: CK doesn't tie our synthetic MutationID

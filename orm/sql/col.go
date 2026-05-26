@@ -58,37 +58,37 @@ func (c Col[T]) Emit(e *Emitter) {
 
 // Eq builds `c = v` with v parameterized.
 func (c Col[T]) Eq(v T) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "=", right: Lit[T](v)}
+	return binOpP{left: c, op: "=", right: Lit[T](v)}
 }
 
 // Neq builds `c <> v`.
 func (c Col[T]) Neq(v T) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "<>", right: Lit[T](v)}
+	return binOpP{left: c, op: "<>", right: Lit[T](v)}
 }
 
 // Lt builds `c < v`.
 func (c Col[T]) Lt(v T) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "<", right: Lit[T](v)}
+	return binOpP{left: c, op: "<", right: Lit[T](v)}
 }
 
 // Lte builds `c <= v`.
 func (c Col[T]) Lte(v T) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "<=", right: Lit[T](v)}
+	return binOpP{left: c, op: "<=", right: Lit[T](v)}
 }
 
 // Gt builds `c > v`.
 func (c Col[T]) Gt(v T) Predicate {
-	return binOpP{left: stripAlias[T](c), op: ">", right: Lit[T](v)}
+	return binOpP{left: c, op: ">", right: Lit[T](v)}
 }
 
 // Gte builds `c >= v`.
 func (c Col[T]) Gte(v T) Predicate {
-	return binOpP{left: stripAlias[T](c), op: ">=", right: Lit[T](v)}
+	return binOpP{left: c, op: ">=", right: Lit[T](v)}
 }
 
 // EqExpr builds `c = expr` with another typed expression on the RHS.
 func (c Col[T]) EqExpr(other Expr[T]) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "=", right: other}
+	return binOpP{left: c, op: "=", right: other}
 }
 
 // EqCol is the col-vs-col convenience for JOIN ON clauses. Equivalent to
@@ -96,22 +96,22 @@ func (c Col[T]) EqExpr(other Expr[T]) Predicate {
 //
 //	main.LeftJoin(wechatRef, wechat.T.Userid.EqCol(reg.T.Userid))
 func (c Col[T]) EqCol(other Col[T]) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "=", right: stripAlias[T](other)}
+	return binOpP{left: c, op: "=", right: other}
 }
 
 // NeqExpr builds `c <> expr`.
 func (c Col[T]) NeqExpr(other Expr[T]) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "<>", right: other}
+	return binOpP{left: c, op: "<>", right: other}
 }
 
 // LtExpr builds `c < expr`.
 func (c Col[T]) LtExpr(other Expr[T]) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "<", right: other}
+	return binOpP{left: c, op: "<", right: other}
 }
 
 // GtExpr builds `c > expr`.
 func (c Col[T]) GtExpr(other Expr[T]) Predicate {
-	return binOpP{left: stripAlias[T](c), op: ">", right: other}
+	return binOpP{left: c, op: ">", right: other}
 }
 
 // In builds `c IN (v1, v2, ...)`. Variadic form is convenient for literal
@@ -129,7 +129,7 @@ func (c Col[T]) InSlice(vs []T) Predicate {
 	for i, v := range vs {
 		args[i] = v
 	}
-	return inP{left: stripAlias[T](c), values: args}
+	return inP{left: c, values: args}
 }
 
 // NotIn builds `c NOT IN (v1, v2, ...)`.
@@ -141,37 +141,32 @@ func (c Col[T]) NotIn(vs ...T) Predicate {
 	for i, v := range vs {
 		args[i] = v
 	}
-	return inP{left: stripAlias[T](c), values: args, not: true}
+	return inP{left: c, values: args, not: true}
 }
 
 // Between builds `c BETWEEN lo AND hi` (both parameterized).
 func (c Col[T]) Between(lo, hi T) Predicate {
-	return betweenP{left: stripAlias[T](c), lo: lo, hi: hi}
+	return betweenP{left: c, lo: lo, hi: hi}
 }
 
 // IsNull builds `c IS NULL`.
-func (c Col[T]) IsNull() Predicate { return nullP{left: stripAlias[T](c)} }
+func (c Col[T]) IsNull() Predicate { return nullP{left: c} }
 
 // IsNotNull builds `c IS NOT NULL`.
-func (c Col[T]) IsNotNull() Predicate { return nullP{left: stripAlias[T](c), not: true} }
+func (c Col[T]) IsNotNull() Predicate { return nullP{left: c, not: true} }
 
 // ----- string-only operations via generic constraint -----
 
 // Like emits `col LIKE pat`. Constrained to string-kinded T at compile time:
 // `Like(userid_col, "...")` fails to compile when userid_col is Col[uint64].
 func Like[T Stringish](c Col[T], pat string) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "LIKE", right: Lit(pat)}
+	return binOpP{left: c, op: "LIKE", right: Lit(pat)}
 }
 
 // NotLike emits `col NOT LIKE pat`.
 func NotLike[T Stringish](c Col[T], pat string) Predicate {
-	return binOpP{left: stripAlias[T](c), op: "NOT LIKE", right: Lit(pat)}
+	return binOpP{left: c, op: "NOT LIKE", right: Lit(pat)}
 }
-
-// stripAlias is now identity — Col[T] no longer carries an asAlias field
-// (aliases attach via AliasedExpr returned from .As). Kept as a stub so
-// existing predicate constructors compile unchanged. Inlining-friendly.
-func stripAlias[T any](c Col[T]) Col[T] { return c }
 
 // ----- numeric ops returning Expr[T] -----
 

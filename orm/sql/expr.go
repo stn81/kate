@@ -37,20 +37,6 @@ type AnyCol interface {
 	column()
 }
 
-// Erase lifts a typed Expr[T] into the existential AnyExpr. Go's type
-// inference cannot always cast `Expr[T]` to `AnyExpr` at variadic call
-// sites, and an explicit Erase reads clearly at the call site.
-func Erase[T any](e Expr[T]) AnyExpr { return e }
-
-// EraseAll erases a slice of typed expressions in one call.
-func EraseAll[T any](exprs []Expr[T]) []AnyExpr {
-	out := make([]AnyExpr, len(exprs))
-	for i, e := range exprs {
-		out[i] = e
-	}
-	return out
-}
-
 // ---------- literal ----------
 
 // Lit lifts a Go value v into a typed parameterized literal Expr[T]. The
