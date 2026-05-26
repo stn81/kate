@@ -4,13 +4,16 @@ package sql
 // type the column scans into; it carries through to predicate operands
 // (Eq, In, Between, ...) and to typed function compositions so that
 // `userid.Eq("abc")` fails at compile time.
+//
+// Col[T] is intentionally lean — it does not carry projection aliases
+// itself. Use .As(alias) to attach one; the chain promotes to the broader
+// Expr[T] interface so the same call site works for columns, functions,
+// raw expressions, and any other typed expr.
 type Col[T any] struct {
 	schema string // "" if unqualified
 	table  string // table name (for un-aliased references)
 	alias  string // alias name (overrides table prefix when non-empty)
 	name   string // column name
-	// asAlias renames the column in a SELECT projection: SELECT col AS asAlias.
-	asAlias string
 }
 
 // NewCol constructs a typed column reference. Typically emitted by codegen.
@@ -18,11 +21,14 @@ func NewCol[T any](schema, table, name string) Col[T] {
 	return Col[T]{schema: schema, table: table, name: name}
 }
 
-// As returns a copy of the column with a projection alias attached. The
-// alias is only used when the column appears in a SELECT list.
-func (c Col[T]) As(alias string) Col[T] {
-	c.asAlias = alias
-	return c
+// As attaches a projection alias and promotes the chain to Expr[T]. After
+// .As you can no longer call Col-only methods (Of, Eq, ...) — alias is the
+// last step of a typed projection.
+//
+// Implements Expr[T].As; satisfies the interface so a value held as
+// Expr[T] can still be aliased.
+func (c Col[T]) As(alias string) Expr[T] {
+	return AliasedExpr[T]{Inner: c, Alias: alias}
 }
 
 // Of requalifies the column under the given TableRef's alias (or schema/table
@@ -46,10 +52,6 @@ func (Col[T]) column()     {}
 func (Col[T]) Type() Type  { return goTypeTag[T]() }
 func (c Col[T]) Emit(e *Emitter) {
 	e.QualifiedColumn(c.schema, c.table, c.alias, c.name)
-	if c.asAlias != "" {
-		e.WriteString(" AS ")
-		e.Quote(c.asAlias)
-	}
 }
 
 // ----- comparison predicates: typed -----
@@ -87,6 +89,14 @@ func (c Col[T]) Gte(v T) Predicate {
 // EqExpr builds `c = expr` with another typed expression on the RHS.
 func (c Col[T]) EqExpr(other Expr[T]) Predicate {
 	return binOpP{left: stripAlias[T](c), op: "=", right: other}
+}
+
+// EqCol is the col-vs-col convenience for JOIN ON clauses. Equivalent to
+// c.EqExpr(other) but reads more naturally at the call site:
+//
+//	main.LeftJoin(wechatRef, wechat.T.Userid.EqCol(reg.T.Userid))
+func (c Col[T]) EqCol(other Col[T]) Predicate {
+	return binOpP{left: stripAlias[T](c), op: "=", right: stripAlias[T](other)}
 }
 
 // NeqExpr builds `c <> expr`.
@@ -158,13 +168,10 @@ func NotLike[T Stringish](c Col[T], pat string) Predicate {
 	return binOpP{left: stripAlias[T](c), op: "NOT LIKE", right: Lit(pat)}
 }
 
-// stripAlias returns a copy of the column without its projection alias so
-// that the predicate's LHS emits the bare reference (we don't want
-// `WHERE col AS x = ?`).
-func stripAlias[T any](c Col[T]) Col[T] {
-	c.asAlias = ""
-	return c
-}
+// stripAlias is now identity — Col[T] no longer carries an asAlias field
+// (aliases attach via AliasedExpr returned from .As). Kept as a stub so
+// existing predicate constructors compile unchanged. Inlining-friendly.
+func stripAlias[T any](c Col[T]) Col[T] { return c }
 
 // ----- numeric ops returning Expr[T] -----
 
@@ -198,11 +205,14 @@ func (binExpr[T]) expr()       {}
 func (binExpr[T]) exprT(T)     {}
 func (binExpr[T]) Type() Type  { return goTypeTag[T]() }
 func (b binExpr[T]) Emit(e *Emitter) {
-	e.WriteByte('(')
+	_ = e.WriteByte('(')
 	b.left.Emit(e)
-	e.WriteByte(' ')
+	_ = e.WriteByte(' ')
 	e.WriteString(b.op)
-	e.WriteByte(' ')
+	_ = e.WriteByte(' ')
 	b.right.Emit(e)
-	e.WriteByte(')')
+	_ = e.WriteByte(')')
+}
+func (b binExpr[T]) As(alias string) Expr[T] {
+	return AliasedExpr[T]{Inner: b, Alias: alias}
 }

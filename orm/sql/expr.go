@@ -12,9 +12,21 @@ type AnyExpr interface {
 
 // Expr[T] is a typed value-yielding expression. T is the Go type the
 // expression evaluates to when scanned into a row struct.
+//
+// All Expr[T] producers (Col[T], Lit, Func, RawExpr, Coalesce, etc.) provide
+// .As so projection aliases attach via a fluent chain — e.g.
+//
+//	expr.Coalesce(t.X, sql.Lit("")).As("display_x")
+//
+// .As is intentionally part of the interface so callers holding an
+// Expr[T] (returned from helpers) can alias without type assertions.
 type Expr[T any] interface {
 	AnyExpr
 	exprT(T)
+	// As returns a copy of the expression with a projection alias attached.
+	// The alias only emits in SELECT contexts; WHERE / JOIN / GROUP BY
+	// ignore it. Returns Expr[T] so the chain remains typed.
+	As(alias string) Expr[T]
 }
 
 // AnyCol is AnyExpr that originates from a real column reference (vs. a
@@ -54,6 +66,9 @@ func (litExpr[T]) Type() Type  { return goTypeTag[T]() }
 func (l litExpr[T]) Emit(e *Emitter) {
 	e.Param(l.v)
 }
+func (l litExpr[T]) As(alias string) Expr[T] {
+	return AliasedExpr[T]{Inner: l, Alias: alias}
+}
 
 // ---------- raw expr ----------
 
@@ -84,9 +99,12 @@ func (r rawExprT[T]) Emit(e *Emitter) {
 			e.Param(r.args[idx])
 			idx++
 		} else {
-			e.WriteByte(r.sql[i])
+			_ = e.WriteByte(r.sql[i])
 		}
 	}
+}
+func (r rawExprT[T]) As(alias string) Expr[T] {
+	return AliasedExpr[T]{Inner: r, Alias: alias}
 }
 
 // ---------- func ----------
@@ -108,14 +126,17 @@ func (funcExpr[T]) exprT(T)     {}
 func (funcExpr[T]) Type() Type  { return goTypeTag[T]() }
 func (f funcExpr[T]) Emit(e *Emitter) {
 	e.WriteString(f.name)
-	e.WriteByte('(')
+	_ = e.WriteByte('(')
 	for i, a := range f.args {
 		if i > 0 {
 			e.WriteString(", ")
 		}
 		a.Emit(e)
 	}
-	e.WriteByte(')')
+	_ = e.WriteByte(')')
+}
+func (f funcExpr[T]) As(alias string) Expr[T] {
+	return AliasedExpr[T]{Inner: f, Alias: alias}
 }
 
 // ---------- closure-based factory (for external packages) ----------
@@ -138,6 +159,9 @@ func (wrappedExpr[T]) expr()       {}
 func (wrappedExpr[T]) exprT(T)     {}
 func (w wrappedExpr[T]) Type() Type { return w.typ }
 func (w wrappedExpr[T]) Emit(e *Emitter) { w.emit(e) }
+func (w wrappedExpr[T]) As(alias string) Expr[T] {
+	return AliasedExpr[T]{Inner: w, Alias: alias}
+}
 
 // NewAnyExpr is the existential-typed analog of NewExpr for when the
 // expression result type is genuinely heterogeneous (rare; prefer NewExpr).
@@ -169,6 +193,13 @@ func ExprAs[T any](e Expr[T], alias string) Expr[T] { return AliasedExpr[T]{Inne
 func (AliasedExpr[T]) expr()      {}
 func (AliasedExpr[T]) exprT(T)    {}
 func (a AliasedExpr[T]) Type() Type { return a.Inner.Type() }
+
+// As on AliasedExpr replaces the alias (the last call wins), keeping
+// a single AS in the emitted SQL.
+func (a AliasedExpr[T]) As(alias string) Expr[T] {
+	a.Alias = alias
+	return a
+}
 func (a AliasedExpr[T]) Emit(e *Emitter) {
 	a.Inner.Emit(e)
 	if a.Alias != "" {

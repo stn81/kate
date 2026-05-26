@@ -15,9 +15,12 @@ func (s subqueryExpr[T]) Emit(e *Emitter) {
 		e.SetError(ErrSubqueryShape{Got: n})
 		return
 	}
-	e.WriteByte('(')
+	_ = e.WriteByte('(')
 	s.sb.emit(e)
-	e.WriteByte(')')
+	_ = e.WriteByte(')')
+}
+func (s subqueryExpr[T]) As(alias string) Expr[T] {
+	return AliasedExpr[T]{Inner: s, Alias: alias}
 }
 
 // InSubquery builds `col IN (SELECT ...)` for a typed column. The subquery
