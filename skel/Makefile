@@ -37,10 +37,14 @@ LAST_DATE   = $(shell date -d @$(LAST_T) +%Y-%m-%dT%H:%M:%S)
 endif
 endif
 
-ifneq ($(wildcard $(HOME_DIR)/vendor/github.com/stn81/kate/*),)
-KATE_APP_PKG=__PACKAGE_NAME__/vendor/github.com/stn81/kate/app
-else
+# 注意：Go module 模式下，-ldflags -X 的目标必须是包的导入路径
+# （github.com/stn81/kate/app），即使 vendor 也不要写成 vendor 路径，
+# 否则 -X 静默不生效、version 命令打印为空。
 KATE_APP_PKG=github.com/stn81/kate/app
+
+GCFLAGS =
+ifeq ($(debug), 1)
+GCFLAGS = all=-N -l
 endif
 
 LDFLAGS  = -X $(KATE_APP_PKG).VersionMajor=$(VER_MAJOR)
@@ -59,7 +63,7 @@ all:
 	@echo "make: CGO_LDFLAGS=$(CGO_LDFLAGS)"
 	@echo "make: LIBRARY_PATH=$(LIBRARY_PATH)"
 	@echo "make: LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)"
-	$(GO) build -mod vendor -ldflags "$(LDFLAGS)" -o $(BIN) $(__APP_NAME___SRC)
+	$(GO) build -mod vendor -gcflags="$(GCFLAGS)" -ldflags "$(LDFLAGS)" -o $(BIN) $(__APP_NAME___SRC)
 
 lint:
 	$(LINT) run

@@ -26,7 +26,8 @@ function doBuild() {
 
     pwd
     echo -ne "-> building $1 \t ... "
-    make #>/dev/null
+    # dev 环境带调试符号（-N -l），便于 dlv 断点
+    [ "$APP_ENV" = "dev" ] && make debug=1 || make #>/dev/null
     if [ $? -eq 0 ]; then
         echo 'done'
     else
