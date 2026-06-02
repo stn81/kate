@@ -18,6 +18,7 @@ type HTTPConfig struct {
 	MaxBodyBytes   int64
 	LogFile        string
 	LogSampler     LogSamplerConfig
+	HandleTimeout  time.Duration
 }
 
 // SectionName implements the `Config.SectionName()` method
@@ -37,5 +38,6 @@ func (conf *HTTPConfig) Load(section *ini.Section) error {
 	conf.LogSampler.Tick = section.Key("log_sampler_tick").MustDuration(time.Second)
 	conf.LogSampler.First = section.Key("log_sampler_first").MustInt(100)
 	conf.LogSampler.ThereAfter = section.Key("log_sampler_thereafter").MustInt(10000)
+	conf.HandleTimeout = section.Key("handle_timeout").MustDuration(30 * time.Second)
 	return nil
 }

@@ -28,6 +28,7 @@ type httpService struct {
 	wg           sync.WaitGroup
 	logger       *zap.Logger
 	accessLogger *zap.Logger
+	ctx          context.Context
 }
 
 // Start the http service
@@ -36,10 +37,12 @@ func Start(upgrader *tableflip.Upgrader, logger *zap.Logger) {
 		panic("httpsrv start twice")
 	}
 
+	logger = logger.Named("httpsrv")
 	gService = &httpService{
 		conf:     *config.HTTP,
 		upgrader: upgrader,
-		logger:   logger.Named("httpsrv"),
+		logger:   logger,
+		ctx:      log.ToContext(context.Background(), logger),
 	}
 	gService.start()
 }
@@ -56,17 +59,10 @@ func (s *httpService) start() {
 
 	s.initAccessLogger()
 
-	// 定义中间件栈，可根据需要在下面追加
-	c := kate.NewChain(
-		kate.TraceId,
-		kate.Logging(s.accessLogger),
-		kate.Recovery,
-	)
-
 	// 注册Handler
 	router := kate.NewRESTRouter(context.Background(), s.logger)
 	router.SetMaxBodyBytes(s.conf.MaxBodyBytes)
-	router.GET("/hello", c.Then(&HelloHandler{}))
+	s.setupRoutes(router)
 
 	// 生成一个http.Server对象
 	s.server = &http.Server{
