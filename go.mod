@@ -1,6 +1,6 @@
 module github.com/stn81/kate
 
-go 1.21.3
+go 1.26.3
 
 replace google.golang.org/grpc => github.com/grpc/grpc-go v1.59.0
 
