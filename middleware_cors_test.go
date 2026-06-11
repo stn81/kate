@@ -1,5 +1,4 @@
 package kate
-package kate
 
 import (
 	"context"
