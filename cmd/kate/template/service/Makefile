@@ -4,7 +4,7 @@ HOME_DIR=$(shell dirname $(MAKEFILE))
 OS := $(shell uname -s)
 
 #程序名称
-APP  = __APP_NAME__
+APP  = kateapp
 
 GO	 = $(GOROOT)/bin/go
 LINT = golangci-lint
@@ -12,7 +12,7 @@ OUT_DIR = $(HOME_DIR)/outputs
 BIN_DIR = $(OUT_DIR)/bin
 BIN  = $(BIN_DIR)/$(APP)
 
-__APP_NAME___SRC  = $(HOME_DIR)/app/__APP_NAME__/main.go
+APP_SRC  = $(HOME_DIR)/app/$(APP)/main.go
 
 #程序版本号
 VER_MAJOR   = 1
@@ -63,7 +63,7 @@ all:
 	@echo "make: CGO_LDFLAGS=$(CGO_LDFLAGS)"
 	@echo "make: LIBRARY_PATH=$(LIBRARY_PATH)"
 	@echo "make: LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)"
-	$(GO) build -mod vendor -gcflags="$(GCFLAGS)" -ldflags "$(LDFLAGS)" -o $(BIN) $(__APP_NAME___SRC)
+	$(GO) build -mod vendor -gcflags="$(GCFLAGS)" -ldflags "$(LDFLAGS)" -o $(BIN) $(APP_SRC)
 
 lint:
 	$(LINT) run

@@ -3,6 +3,7 @@ package config
 import (
 	"time"
 
+	"github.com/stn81/kate/app"
 	"gopkg.in/ini.v1"
 )
 
@@ -24,7 +25,7 @@ func (conf *GRPCConfig) SectionName() string {
 // Load implements the `Config.Load()` method
 func (conf *GRPCConfig) Load(section *ini.Section) error {
 	conf.Addr = section.Key("addr").MustString(":9090")
-	conf.LogFile = section.Key("log_file").MustString("__APP_NAME__.access")
+	conf.LogFile = section.Key("log_file").MustString(app.GetName() + ".access")
 	conf.LogSampler.Enabled = section.Key("log_sampler_enabled").MustBool(false)
 	conf.LogSampler.Tick = section.Key("log_sampler_tick").MustDuration(time.Second)
 	conf.LogSampler.First = section.Key("log_sampler_first").MustInt(100)

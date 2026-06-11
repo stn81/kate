@@ -29,10 +29,16 @@ func Load(file string) error {
 	configs := []Config{
 		Main,
 		Profiling,
+		//kate:begin mysql
 		DB,
+		//kate:end mysql
+		//kate:begin redis
 		Redis,
+		//kate:end redis
 		HTTP,
+		//kate:begin grpc
 		GRPC,
+		//kate:end grpc
 	}
 
 	for _, config := range configs {

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stn81/kate/app"
 
-	"__PACKAGE_NAME__/app/__APP_NAME__/cmd"
+	"github.com/stn81/kate/cmd/kate/template/service/app/kateapp/cmd"
 )
 
 var (

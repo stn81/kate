@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"__PACKAGE_NAME__/config"
+	"github.com/stn81/kate/cmd/kate/template/service/config"
 )
 
 var gService *httpService

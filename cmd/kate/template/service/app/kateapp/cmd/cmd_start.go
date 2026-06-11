@@ -13,15 +13,21 @@ import (
 	"github.com/stn81/kate/app"
 	"github.com/stn81/kate/log"
 	"github.com/stn81/kate/log/encoders/simple"
+	//kate:begin redis
 	"github.com/stn81/kate/rdb"
+	//kate:end redis
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"__PACKAGE_NAME__/config"
-	"__PACKAGE_NAME__/grpcsrv"
-	"__PACKAGE_NAME__/httpsrv"
-	"__PACKAGE_NAME__/model"
-	"__PACKAGE_NAME__/profiling"
+	"github.com/stn81/kate/cmd/kate/template/service/config"
+	//kate:begin grpc
+	"github.com/stn81/kate/cmd/kate/template/service/grpcsrv"
+	//kate:end grpc
+	"github.com/stn81/kate/cmd/kate/template/service/httpsrv"
+	//kate:begin mysql
+	"github.com/stn81/kate/cmd/kate/template/service/model"
+	//kate:end mysql
+	"github.com/stn81/kate/cmd/kate/template/service/profiling"
 )
 
 func NewStartCmd() *cobra.Command {
@@ -71,10 +77,15 @@ func startCmdFunc(_ *cobra.Command, _ []string) {
 
 	logger.Info("server starting")
 
+	//kate:begin redis
 	rdb.Init(config.Redis.Config)
 	defer rdb.Uninit()
+	//kate:end redis
 
+	//kate:begin mysql
 	model.Init(logger)
+	defer model.Uninit()
+	//kate:end mysql
 
 	// setup upgrader to support zero-downtime upgrade/restart
 	upgrader, err := tableflip.New(tableflip.Options{
@@ -86,8 +97,10 @@ func startCmdFunc(_ *cobra.Command, _ []string) {
 	}
 	defer upgrader.Stop()
 
+	//kate:begin grpc
 	grpcsrv.Start(upgrader, logger)
 	defer grpcsrv.Stop()
+	//kate:end grpc
 
 	httpsrv.Start(upgrader, logger)
 	defer httpsrv.Stop()
@@ -100,12 +113,12 @@ func startCmdFunc(_ *cobra.Command, _ []string) {
 func initLogger() *zap.Logger {
 	enc := simple.NewEncoder()
 	core := zapcore.NewTee(
-		log.MustNewCoreWithLevelAbove(zapcore.DebugLevel, path.Join(config.Main.LogDir, "__APP_NAME__.all.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.DebugLevel, path.Join(config.Main.LogDir, "__APP_NAME__.debug.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.InfoLevel, path.Join(config.Main.LogDir, "__APP_NAME__.info.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.WarnLevel, path.Join(config.Main.LogDir, "__APP_NAME__.warn.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.ErrorLevel, path.Join(config.Main.LogDir, "__APP_NAME__.error.log"), enc),
-		log.MustNewCoreWithLevelOnly(zapcore.FatalLevel, path.Join(config.Main.LogDir, "__APP_NAME__.fatal.log"), enc),
+		log.MustNewCoreWithLevelAbove(zapcore.DebugLevel, path.Join(config.Main.LogDir, app.GetName()+".all.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.DebugLevel, path.Join(config.Main.LogDir, app.GetName()+".debug.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.InfoLevel, path.Join(config.Main.LogDir, app.GetName()+".info.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.WarnLevel, path.Join(config.Main.LogDir, app.GetName()+".warn.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.ErrorLevel, path.Join(config.Main.LogDir, app.GetName()+".error.log"), enc),
+		log.MustNewCoreWithLevelOnly(zapcore.FatalLevel, path.Join(config.Main.LogDir, app.GetName()+".fatal.log"), enc),
 	)
 
 	opts := []zap.Option{

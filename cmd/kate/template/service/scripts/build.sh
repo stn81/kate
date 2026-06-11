@@ -3,7 +3,7 @@ APP_ENV=$1
 case $APP_ENV in 
     'dev')
         ;;
-    'qa')
+    'test')
         ;;
     'prod')
         ;;
@@ -14,7 +14,7 @@ esac
 echo "environment = $APP_ENV"
 
 #程序名称
-APP=__APP_NAME__
+APP=kateapp
 PROJECT_HOME=$(cd $(dirname $0) && cd .. && pwd -P)
 PKG_HOME="$PROJECT_HOME/outputs"
 

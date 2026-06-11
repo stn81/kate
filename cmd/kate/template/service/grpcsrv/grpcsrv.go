@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 
-	"__PACKAGE_NAME__/config"
+	"github.com/stn81/kate/cmd/kate/template/service/config"
 )
 
 var gService *grpcService
