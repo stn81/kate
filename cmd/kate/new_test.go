@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"syscall"
 	"testing"
@@ -133,9 +132,30 @@ func TestNew_HTTPOnlySmoke(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// 构建环境显式剔除 GOROOT：验证 build.sh 的 PATH 回退分支（用户机常无 GOROOT）。
+	var buildEnv []string
+	for _, kv := range os.Environ() {
+		if !strings.HasPrefix(kv, "GOROOT=") {
+			buildEnv = append(buildEnv, kv)
+		}
+	}
+
+	help := exec.Command("./scripts/build.sh", "--help")
+	help.Dir = dir
+	help.Env = buildEnv
+	if out, err := help.CombinedOutput(); err != nil || !strings.Contains(string(out), "Usage:") {
+		t.Fatalf("build.sh --help: err=%v out=%s", err, out)
+	}
+	bad := exec.Command("./scripts/build.sh", "staging")
+	bad.Dir = dir
+	bad.Env = buildEnv
+	if err := bad.Run(); err == nil {
+		t.Fatal("build.sh with unknown env must exit non-zero")
+	}
+
 	build := exec.Command("./scripts/build.sh", "dev")
 	build.Dir = dir
-	build.Env = append(os.Environ(), "GOROOT="+runtime.GOROOT())
+	build.Env = buildEnv
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build.sh dev: %v\n%s", err, out)
 	}
