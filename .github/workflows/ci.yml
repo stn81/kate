@@ -1,0 +1,41 @@
+# CI：框架 + 模板（同一包树，编译器级防腐）+ 脚手架生成矩阵（8 组件组合 build/vet + http-only 运行烟测）。
+# linux+macos 双矩阵顺带守护 Makefile/build.sh 的 Darwin/Linux 分叉。
+# tag 推送同样全量跑，绿灯才建 GitHub Release（发布门禁）。
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+      - run: go build ./...
+      - run: go vet ./...
+      # 含 cmd/kate 生成矩阵：每个 PR 都验证"工具产出的每种项目形态都能构建运行"
+      - run: go test ./... -count=1
+        env:
+          GOFLAGS: -mod=mod
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh release create "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
