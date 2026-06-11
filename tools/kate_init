@@ -20,6 +20,8 @@ fi
 
 cp -Rf $SKEL_DIR/* ./
 cp -f $SKEL_DIR/.gitignore ./
+# skel/go.mod 只是父模块的边界标记（把模板从 kate 仓的 ./... 包树隔离），新项目的 go.mod 由下面 go mod init 现场生成
+rm -f ./go.mod
 
 function do_inflate() {
     f=$1
