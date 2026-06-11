@@ -82,6 +82,16 @@ func (h *BaseHandler) ParseRequest(ctx context.Context, r *Request, req any) err
 
 // Error writes out an error response
 func (h *BaseHandler) Error(ctx context.Context, w http.ResponseWriter, err error) {
+	_, result := errorResult(err)
+
+	if err := h.WriteJson(w, result); err != nil {
+		log.GetLogger(ctx).Error("write json response", zap.Error(err))
+	}
+}
+
+// errorResult 把任意 error 归一成 errno envelope（非 ErrorInfo 一律按 ErrServerInternal）。
+// errno 风格与 REST 风格共用同一 envelope，二者只差 HTTP 状态码的写法。
+func errorResult(err error) (ErrorInfo, *Result) {
 	var errInfo ErrorInfo
 	if !errors.As(err, &errInfo) {
 		errInfo = ErrServerInternal
@@ -96,10 +106,7 @@ func (h *BaseHandler) Error(ctx context.Context, w http.ResponseWriter, err erro
 	if errors.As(errInfo, &errInfoWithData) {
 		result.Data = errInfoWithData.Data()
 	}
-
-	if err := h.WriteJson(w, result); err != nil {
-		log.GetLogger(ctx).Error("write json response", zap.Error(err))
-	}
+	return errInfo, result
 }
 
 // Ok writes out a success response without data, used typically in an `update` api.
