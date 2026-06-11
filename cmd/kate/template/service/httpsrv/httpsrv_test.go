@@ -46,4 +46,16 @@ func TestHelloRoute(t *testing.T) {
 	if result.ErrNO != 0 || result.Data != "hello world" {
 		t.Errorf("envelope = %+v, want errno 0 + hello world", result)
 	}
+
+	// k8s 探针：依赖句柄未初始化时跳过检查 → 两者皆 200（组件无关，裁剪后仍成立）。
+	for _, path := range []string{"/livez", "/readyz"} {
+		probe, err := http.Get(srv.URL + path)
+		if err != nil {
+			t.Fatalf("GET %s: %v", path, err)
+		}
+		_ = probe.Body.Close()
+		if probe.StatusCode != http.StatusOK {
+			t.Errorf("%s status = %d, want 200", path, probe.StatusCode)
+		}
+	}
 }

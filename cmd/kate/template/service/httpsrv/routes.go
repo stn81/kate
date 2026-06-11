@@ -29,5 +29,9 @@ func (s *httpService) setupRoutes(router *kate.RESTRouter) {
 	)
 
 	router.OPTIONS("/*path", cBase.Then(&OptionsHandler{}))
+	// k8s 探针（HTTP 状态码语义）：livez 恒 200（不查依赖，liveness 失败会触发重启）；
+	// readyz 逐项 ping 依赖，任一失败真实 503（摘流量不重启）。
+	router.GET("/livez", cBase.Then(&LivenessHandler{}))
+	router.GET("/readyz", cBase.Then(&ReadinessHandler{}))
 	router.GET("/hello", cBase.Then(&HelloHandler{}))
 }
